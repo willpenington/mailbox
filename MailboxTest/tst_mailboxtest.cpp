@@ -22,6 +22,8 @@ USA
 #include <QString>
 #include <QtTest>
 
+#include "erlangshell.h"
+
 class MailboxTest : public QObject
 {
     Q_OBJECT
@@ -30,6 +32,7 @@ public:
     MailboxTest();
 
 private Q_SLOTS:
+    void canCommunicateWithErlang_data();
     void canCommunicateWithErlang();
 };
 
@@ -37,9 +40,22 @@ MailboxTest::MailboxTest()
 {
 }
 
+void MailboxTest::canCommunicateWithErlang_data() {
+  QTest::addColumn<QByteArray>("statement");
+  QTest::addColumn<QByteArray>("expected");
+
+  QTest::newRow("atom") << QByteArray("sample_atom.") << QByteArray("sample_atom\n");
+  QTest::newRow("maths") << QByteArray("1 + 1.") << QByteArray("2\n");
+  QTest::newRow("complex types") << QByteArray("[{foo, bar}, 1 + 3, baz].")
+                                 << QByteArray("[{foo,bar},4,baz]\n");
+}
+
 void MailboxTest::canCommunicateWithErlang()
 {
-    QVERIFY2(true, "Failure");
+  ErlangShell erl();
+
+  QFETCH(QByteArray, statement);
+  QTEST(erl.execStatement(statement), "expected");
 }
 
 QTEST_APPLESS_MAIN(MailboxTest)
