@@ -15,5 +15,9 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += tst_mailboxtest.cpp
+SOURCES += tst_mailboxtest.cpp \
+    erlangshell.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
+
+HEADERS += \
+    erlangshell.h
