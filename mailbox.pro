@@ -1,4 +1,9 @@
 TEMPLATE = subdirs
 
+CONFIG += ordered
+
 SUBDIRS += \
-    MailboxTest
+    MailboxTest \
+    MailboxQt
+
+MailboxTest.depends = MailboxQt

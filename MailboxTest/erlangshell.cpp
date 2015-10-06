@@ -36,7 +36,7 @@ ErlangShell::~ErlangShell() {
 QByteArray ErlangShell::execStatement(QByteArray statement) {
 
     // Ignore the REPL command prompt (>) and any older data in the stream
-    proc.waitForReadyRead();
+    proc.waitForReadyRead(300);
     proc.readAll();
 
     // Write the statement to standard in

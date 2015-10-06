@@ -23,6 +23,7 @@ USA
 #include <QtTest>
 
 #include "erlangshell.h"
+#include "mailboxqt.h"
 
 class MailboxTest : public QObject
 {
@@ -38,6 +39,7 @@ private Q_SLOTS:
 
 MailboxTest::MailboxTest()
 {
+    Mailbox::init();
 }
 
 void MailboxTest::canCommunicateWithErlang_data() {

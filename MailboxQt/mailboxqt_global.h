@@ -1,0 +1,12 @@
+#ifndef MAILBOXQT_GLOBAL_H
+#define MAILBOXQT_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(MAILBOXQT_LIBRARY)
+#  define MAILBOXQTSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define MAILBOXQTSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // MAILBOXQT_GLOBAL_H
