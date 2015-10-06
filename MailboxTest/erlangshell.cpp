@@ -25,7 +25,7 @@ ErlangShell::ErlangShell(QByteArray sname)
     proc.start(ERL_COMMAND + sname);
 
     // Ignore the REPL Header Infomation
-    proc.waitForReadyRead();
+    Q_ASSERT(proc.waitForReadyRead(10000));
 }
 
 ErlangShell::~ErlangShell() {
@@ -36,7 +36,7 @@ ErlangShell::~ErlangShell() {
 QByteArray ErlangShell::execStatement(QByteArray statement) {
 
     // Ignore the REPL command prompt (>) and any older data in the stream
-    proc.waitForReadyRead();
+    proc.waitForReadyRead(100);
     proc.readAll();
 
     // Write the statement to standard in
@@ -51,7 +51,7 @@ QByteArray ErlangShell::execStatement(QByteArray statement) {
      * VM writes what is has when it has it and sometimes it takes a few
      * sections to get the full response. */
     do {
-        proc.waitForReadyRead();
+        Q_ASSERT(proc.waitForReadyRead(100));
         response.append(proc.readLine());
     } while (!(response.endsWith('\n')));
 
