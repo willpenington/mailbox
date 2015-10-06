@@ -54,7 +54,7 @@ void MailboxTest::canCommunicateWithErlang_data() {
 
 void MailboxTest::canCommunicateWithErlang()
 {
-  ErlangShell erl;
+  ErlangShell erl("dummy");
 
   QFETCH(QByteArray, statement);
   QTEST(erl.execStatement(statement), "expected");

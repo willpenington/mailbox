@@ -20,9 +20,9 @@ USA
 
 #include "erlangshell.h"
 
-ErlangShell::ErlangShell()
+ErlangShell::ErlangShell(QByteArray sname)
 {
-    proc.start(ERL_COMMAND);
+    proc.start(ERL_COMMAND + sname);
 
     // Ignore the REPL Header Infomation
     proc.waitForReadyRead();
@@ -36,7 +36,7 @@ ErlangShell::~ErlangShell() {
 QByteArray ErlangShell::execStatement(QByteArray statement) {
 
     // Ignore the REPL command prompt (>) and any older data in the stream
-    proc.waitForReadyRead(300);
+    proc.waitForReadyRead();
     proc.readAll();
 
     // Write the statement to standard in

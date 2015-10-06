@@ -24,12 +24,12 @@ USA
 #include <QByteArray>
 #include <QProcess>
 
-#define ERL_COMMAND "/usr/bin/erl"
+#define ERL_COMMAND "/usr/bin/erl -sname "
 
 class ErlangShell
 {
 public:
-    ErlangShell();
+    ErlangShell(QByteArray sname);
     ~ErlangShell();
 
     QByteArray execStatement(QByteArray statement);
