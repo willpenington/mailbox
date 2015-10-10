@@ -69,9 +69,11 @@ void MailboxTest::canCommunicateWithErlangShell()
 void MailboxTest::canSendMessageToErlang()
 {
   ErlangShell erl("sendmessage");
-  Mailbox::Client node("sendmessage", "sendmessagelib");
+  Mailbox::Client *node = new Mailbox::Client("sendmessage", "sendmessagelib");
 
   erl.execStatement("register(shell, self()).");
+
+  node->sendAtom("shell", "testmessage");
   
   QCOMPARE(erl.execStatement("flush()."), "Shell got sendmessage");
 }
@@ -79,7 +81,7 @@ void MailboxTest::canSendMessageToErlang()
 void MailboxTest::canRecieveMessagesFromErlang()
 {
     ErlangShell erl("recvmessage");
-    Mailbox::Client *node("recvmessage", "recvmessagelib");
+    Mailbox::Client *node = new Mailbox::Client("recvmessage", "recvmessagelib");
 
     QSignalSpy recvSpy(node, SIGNAL(messageRecieved));
 
