@@ -23,7 +23,9 @@ USA
 #include <QtTest>
 
 #include "erlangshell.h"
+
 #include "mailboxqt.h"
+#include "client.h"
 
 class MailboxTest : public QObject
 {
@@ -35,6 +37,9 @@ public:
 private Q_SLOTS:
     void canCommunicateWithErlangShell_data();
     void canCommunicateWithErlangShell();
+
+    void canSendMessageToErlang();
+
 };
 
 MailboxTest::MailboxTest()
@@ -60,7 +65,15 @@ void MailboxTest::canCommunicateWithErlangShell()
   QTEST(erl.execStatement(statement), "expected");
 }
 
+void MailboxTest::canSendMessageToErlang()
+{
+  ErlangShell erl("sendmessage");
+  Mailbox::Client node("sendmessage", "sendmessagelib");
 
+  erl.execStatement("register(shell, self()).");
+  
+  QCOMPARE(erl.execStatement("flush()."), "Shell got sendmessage");
+}
 
 
 QTEST_APPLESS_MAIN(MailboxTest)
