@@ -33,8 +33,8 @@ public:
     MailboxTest();
 
 private Q_SLOTS:
-    void canCommunicateWithErlang_data();
-    void canCommunicateWithErlang();
+    void canCommunicateWithErlangShell_data();
+    void canCommunicateWithErlangShell();
 };
 
 MailboxTest::MailboxTest()
@@ -42,7 +42,7 @@ MailboxTest::MailboxTest()
     Mailbox::init();
 }
 
-void MailboxTest::canCommunicateWithErlang_data() {
+void MailboxTest::canCommunicateWithErlangShell_data() {
   QTest::addColumn<QByteArray>("statement");
   QTest::addColumn<QByteArray>("expected");
 
@@ -52,13 +52,16 @@ void MailboxTest::canCommunicateWithErlang_data() {
                                  << QByteArray("[{foo,bar},4,baz]\n");
 }
 
-void MailboxTest::canCommunicateWithErlang()
+void MailboxTest::canCommunicateWithErlangShell()
 {
   ErlangShell erl("dummy");
 
   QFETCH(QByteArray, statement);
   QTEST(erl.execStatement(statement), "expected");
 }
+
+
+
 
 QTEST_APPLESS_MAIN(MailboxTest)
 
