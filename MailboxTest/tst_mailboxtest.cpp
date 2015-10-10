@@ -39,6 +39,7 @@ private Q_SLOTS:
     void canCommunicateWithErlangShell();
 
     void canSendMessageToErlang();
+    void canRecieveMessagesFromErlang();
 
 };
 
@@ -75,6 +76,18 @@ void MailboxTest::canSendMessageToErlang()
   QCOMPARE(erl.execStatement("flush()."), "Shell got sendmessage");
 }
 
+void MailboxTest::canRecieveMessagesFromErlang()
+{
+    ErlangShell erl("recvmessage");
+    Mailbox::Client *node("recvmessage", "recvmessagelib");
+
+    QSignalSpy recvSpy(node, SIGNAL(messageRecieved));
+
+    erl.execStatement("{sendmessagelib, foo} ! bar.");
+
+    QVERIFY(recvSpy.wait(1000));
+    QCOMPARE(recvSpy.count(), 1);
+}
 
 QTEST_APPLESS_MAIN(MailboxTest)
 
