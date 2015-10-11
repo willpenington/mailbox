@@ -11,10 +11,12 @@ TEMPLATE = lib
 
 DEFINES += MAILBOXQT_LIBRARY
 
-SOURCES += mailboxqt.cpp
+SOURCES += mailboxqt.cpp \
+    client.cpp
 
 HEADERS += mailboxqt.h\
-        mailboxqt_global.h
+        mailboxqt_global.h \
+    client.h
 
 unix {
     target.path = /usr/lib
