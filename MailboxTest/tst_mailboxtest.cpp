@@ -77,9 +77,13 @@ void MailboxTest::clientCanConnectToErlang_data()
   QTest::addColumn<QByteArray>("cnodeConnectTo");
   QTest::addColumn<bool>("expected");
 
-  QTest::newRow("normal") << "conTest1" << "conTest1Lib" << "conTest1" << true;
-  QTest::newRow("all_different") << "conTest2" << "conTest2Lib" << "wrong" << false;
-  QTest::newRow("all_same") << "conTest3" << "conTest3" << "conTest3" << false;
+  QTest::newRow("normal") << QByteArray("conTest1") << QByteArray("conTest1Lib")
+                          << QByteArray("conTest1") << true;
+  QTest::newRow("all_different") << QByteArray("conTest2")
+                                 << QByteArray("conTest2Lib")
+                                 << QByteArray("wrong") << false;
+  QTest::newRow("all_same") << QByteArray("conTest3") << QByteArray("conTest3")
+                            << QByteArray("conTest3") << false;
 }
 
 void MailboxTest::clientCanConnectToErlang()
