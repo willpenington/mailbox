@@ -20,9 +20,9 @@ USA
 
 #include "erlangshell.h"
 
-ErlangShell::ErlangShell(QByteArray sname)
+ErlangShell::ErlangShell(QByteArray sname, QByteArray cookie)
 {
-    proc.start(ERL_COMMAND + sname);
+    proc.start(ERL_COMMAND + sname + ERL_COOKIE_FLAG + cookie);
 
     // Ignore the REPL Header Infomation
     Q_ASSERT(proc.waitForReadyRead(10000));

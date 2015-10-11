@@ -64,7 +64,7 @@ void MailboxTest::canCommunicateWithErlangShell_data() {
 
 void MailboxTest::canCommunicateWithErlangShell()
 {
-  ErlangShell erl("dummy");
+  ErlangShell erl("dummy", "cookie");
 
   QFETCH(QByteArray, statement);
   QTEST(erl.execStatement(statement), "expected");
@@ -92,7 +92,7 @@ void MailboxTest::clientCanConnectToErlang()
   QFETCH(QByteArray, cnodeNodeName);
   QFETCH(QByteArray, cnodeConnectTo);
 
-  ErlangShell erl(erlangNodeName);
+  ErlangShell erl(erlangNodeName, "cookie");
 
   Mailbox::Client *node = new Mailbox::Client();
 
@@ -103,7 +103,7 @@ void MailboxTest::clientCanConnectToErlang()
 
 void MailboxTest::canSendMessageToErlang()
 {
-  ErlangShell erl("sendmessage");
+  ErlangShell erl("sendmessage", "cookie");
   Mailbox::Client *node = new Mailbox::Client();
   QVERIFY(node->connect("sendmessage", "sendmessagelib"));
 
@@ -121,7 +121,7 @@ void MailboxTest::canRecieveMessagesFromErlang()
     QVERIFY(false);
     return;
 
-    ErlangShell erl("recvmessage");
+    ErlangShell erl("recvmessage", "cookie");
     Mailbox::Client *node = new Mailbox::Client();
     QVERIFY(node->connect("recvmessage", "recvmessagelib"));
 

@@ -25,11 +25,12 @@ USA
 #include <QProcess>
 
 #define ERL_COMMAND "/usr/bin/erl -sname "
+#define ERL_COOKIE_FLAG " -setcookie "
 
 class ErlangShell
 {
 public:
-    ErlangShell(QByteArray sname);
+    ErlangShell(QByteArray sname, QByteArray cookie);
     ~ErlangShell();
 
     QByteArray execStatement(QByteArray statement);
