@@ -39,6 +39,9 @@ private Q_SLOTS:
     void canCommunicateWithErlangShell_data();
     void canCommunicateWithErlangShell();
 
+    void clientCanConnectToErlang_data();
+    void clientCanConnectToErlang();
+
     void canSendMessageToErlang();
     void canRecieveMessagesFromErlang();
 
@@ -65,6 +68,33 @@ void MailboxTest::canCommunicateWithErlangShell()
 
   QFETCH(QByteArray, statement);
   QTEST(erl.execStatement(statement), "expected");
+}
+
+void MailboxTest::clientCanConnectToErlang_data()
+{
+  QTest::addColumn<QByteArray>("erlangNodeName");
+  QTest::addColumn<QByteArray>("cnodeNodeName");
+  QTest::addColumn<QByteArray>("cnodeConnectTo");
+  QTest::addColumn<bool>("expected");
+
+  QTest::newRow("normal") << "conTest1" << "conTest1Lib" << "conTest1" << true;
+  QTest::newRow("all_different") << "conTest2" << "conTest2Lib" << "wrong" << false;
+  QTest::newRow("all_same") << "conTest3" << "conTest3" << "conTest3" << false;
+}
+
+void MailboxTest::clientCanConnectToErlang()
+{
+  QFETCH(QByteArray, erlangNodeName);
+  QFETCH(QByteArray, cnodeNodeName);
+  QFETCH(QByteArray, cnodeConnectTo);
+
+  ErlangShell erl(erlangNodeName);
+
+  Mailbox::Client *node = new Mailbox::Client();
+
+  QTEST(node->connect(cnodeNodeName, cnodeConnectTo), "expected");
+
+  delete(node);
 }
 
 void MailboxTest::canSendMessageToErlang()
