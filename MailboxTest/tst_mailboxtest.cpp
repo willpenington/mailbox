@@ -21,6 +21,7 @@ USA
 
 #include <QString>
 #include <QtTest>
+#include <QSignalSpy>
 
 #include "erlangshell.h"
 
@@ -75,11 +76,15 @@ void MailboxTest::canSendMessageToErlang()
 
   node->sendAtom("shell", "testmessage");
   
-  QCOMPARE(erl.execStatement("flush()."), "Shell got sendmessage");
+  QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got sendmessage"));
+  delete(node);
 }
 
 void MailboxTest::canRecieveMessagesFromErlang()
 {
+    QVERIFY(false);
+    return;
+
     ErlangShell erl("recvmessage");
     Mailbox::Client *node = new Mailbox::Client("recvmessage", "recvmessagelib");
 
@@ -87,8 +92,9 @@ void MailboxTest::canRecieveMessagesFromErlang()
 
     erl.execStatement("{sendmessagelib, foo} ! bar.");
 
-    QVERIFY(recvSpy.wait(1000));
+    QVERIFY(recvSpy.wait(1));
     QCOMPARE(recvSpy.count(), 1);
+    delete(node);
 }
 
 QTEST_APPLESS_MAIN(MailboxTest)
