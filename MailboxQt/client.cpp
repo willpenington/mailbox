@@ -1,8 +1,10 @@
 #include "client.h"
 
+#include "ei_connect.h"
+
 namespace Mailbox {
 
-Client::Client(QByteArray otherNode, QByteArray name, QObject *parent) : QObject(parent)
+Client::Client(QObject *parent) : QObject(parent)
 {
 
 }
@@ -10,6 +12,11 @@ Client::Client(QByteArray otherNode, QByteArray name, QObject *parent) : QObject
 void Client::sendAtom(QByteArray procName, QByteArray atom)
 {
 
+}
+
+bool Client::connect(QByteArray otherNode, QByteArray name)
+{
+    return true;
 }
 
 }

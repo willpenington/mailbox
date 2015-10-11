@@ -9,7 +9,9 @@ class Client : public QObject
 {
     Q_OBJECT
 public:
-    explicit Client(QByteArray otherNode, QByteArray name, QObject *parent = 0);
+    explicit Client(QObject *parent = 0);
+
+    bool connect(QByteArray otherNode, QByteArray name);
 
     void sendAtom(QByteArray procName, QByteArray atom);
 
