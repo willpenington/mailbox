@@ -77,6 +77,7 @@ void MailboxTest::canSendMessageToErlang()
   node->sendAtom("shell", "testmessage");
   
   QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got sendmessage"));
+
   delete(node);
 }
 
@@ -94,6 +95,7 @@ void MailboxTest::canRecieveMessagesFromErlang()
 
     QVERIFY(recvSpy.wait(1));
     QCOMPARE(recvSpy.count(), 1);
+
     delete(node);
 }
 
