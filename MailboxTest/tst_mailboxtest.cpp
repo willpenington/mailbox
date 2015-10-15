@@ -75,15 +75,28 @@ void MailboxTest::clientCanConnectToErlang_data()
   QTest::addColumn<QByteArray>("erlangNodeName");
   QTest::addColumn<QByteArray>("cnodeNodeName");
   QTest::addColumn<QByteArray>("cnodeConnectTo");
+  QTest::addColumn<QByteArray>("erlangCookie");
+  QTest::addColumn<QByteArray>("cnodeCookie");
   QTest::addColumn<bool>("expected");
 
   QTest::newRow("normal") << QByteArray("conTest1") << QByteArray("conTest1Lib")
-                          << QByteArray("conTest1") << true;
+                          << QByteArray("conTest1") << QByteArray("cookie")
+                          << QByteArray("cookie") << true;
   QTest::newRow("all_different") << QByteArray("conTest2")
                                  << QByteArray("conTest2Lib")
-                                 << QByteArray("wrong") << false;
+                                 << QByteArray("wrong") << QByteArray("cookie1")
+                                 << QByteArray("cookie2") << false;
+  QTest::newRow("names_different") << QByteArray("conTest2")
+                                 << QByteArray("conTest2Lib")
+                                 << QByteArray("wrong") << QByteArray("cookie")
+                                 << QByteArray("cookie") << false;
+  QTest::newRow("cookies_different") << QByteArray("conTest1")
+                          << QByteArray("conTest1Lib") << QByteArray("conTest1")
+                          << QByteArray("cookie1") << QByteArray("cookie2")
+                          << true;
   QTest::newRow("all_same") << QByteArray("conTest3") << QByteArray("conTest3")
-                            << QByteArray("conTest3") << false;
+                            << QByteArray("conTest3") << QByteArray("cookie")
+                            << QByteArray("cookie") << false;
 }
 
 void MailboxTest::clientCanConnectToErlang()
@@ -91,12 +104,14 @@ void MailboxTest::clientCanConnectToErlang()
   QFETCH(QByteArray, erlangNodeName);
   QFETCH(QByteArray, cnodeNodeName);
   QFETCH(QByteArray, cnodeConnectTo);
+  QFETCH(QByteArray, erlangCookie);
+  QFETCH(QByteArray, cnodeCookie);
 
-  ErlangShell erl(erlangNodeName, "cookie");
+  ErlangShell erl(erlangNodeName, erlangCookie);
 
   Mailbox::Client *node = new Mailbox::Client();
 
-  QTEST(node->connect(cnodeNodeName, cnodeConnectTo), "expected");
+  QTEST(node->connect(cnodeNodeName, cnodeConnectTo, cnodeCookie), "expected");
 
   delete(node);
 }
@@ -105,7 +120,7 @@ void MailboxTest::canSendMessageToErlang()
 {
   ErlangShell erl("sendmessage", "cookie");
   Mailbox::Client *node = new Mailbox::Client();
-  QVERIFY(node->connect("sendmessage", "sendmessagelib"));
+  QVERIFY(node->connect("sendmessage", "sendmessagelib", "cookie"));
 
   erl.execStatement("register(shell, self()).");
 
@@ -123,7 +138,7 @@ void MailboxTest::canRecieveMessagesFromErlang()
 
     ErlangShell erl("recvmessage", "cookie");
     Mailbox::Client *node = new Mailbox::Client();
-    QVERIFY(node->connect("recvmessage", "recvmessagelib"));
+    QVERIFY(node->connect("recvmessage", "recvmessagelib", "cookie"));
 
     QSignalSpy recvSpy(node, SIGNAL(messageRecieved));
 
