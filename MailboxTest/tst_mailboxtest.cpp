@@ -133,23 +133,23 @@ void MailboxTest::canSendMessageToErlang()
 
 void MailboxTest::canRecieveMessagesFromErlang()
 {
-    QVERIFY(false);
-    return;
 
     ErlangShell erl("recvmessage", "cookie");
     Mailbox::Client *node = new Mailbox::Client();
-    QVERIFY(node->connect("recvmessage", "recvmessagelib", "cookie"));
+    QVERIFY(node->connect("recvmessagelib", "recvmessage", "cookie"));
 
-    QSignalSpy recvSpy(node, SIGNAL(messageRecieved));
+    QSignalSpy recvSpy(node, SIGNAL(messageRecieved()));
 
-    erl.execStatement("{sendmessagelib, foo} ! bar.");
+    erl.execStatement("register(shell, self()).");
+    node->sendPid("shell");
 
-    QVERIFY(recvSpy.wait(1));
-    QCOMPARE(recvSpy.count(), 1);
+    erl.execStatement("receive\n  Pid -> Pid ! hello \n end.");
+
+    QVERIFY(recvSpy.count() == 1 || recvSpy.wait(1000));
 
     delete(node);
 }
 
-QTEST_APPLESS_MAIN(MailboxTest)
+QTEST_GUILESS_MAIN(MailboxTest)
 
 #include "tst_mailboxtest.moc"
