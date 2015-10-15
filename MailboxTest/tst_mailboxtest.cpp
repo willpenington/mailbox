@@ -93,7 +93,7 @@ void MailboxTest::clientCanConnectToErlang_data()
   QTest::newRow("cookies_different") << QByteArray("conTest1")
                           << QByteArray("conTest1Lib") << QByteArray("conTest1")
                           << QByteArray("cookie1") << QByteArray("cookie2")
-                          << true;
+                          << false;
   QTest::newRow("all_same") << QByteArray("conTest3") << QByteArray("conTest3")
                             << QByteArray("conTest3") << QByteArray("cookie")
                             << QByteArray("cookie") << false;
