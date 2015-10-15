@@ -120,7 +120,7 @@ void MailboxTest::canSendMessageToErlang()
 {
   ErlangShell erl("sendmessage", "cookie");
   Mailbox::Client *node = new Mailbox::Client();
-  QVERIFY(node->connect("sendmessage", "sendmessagelib", "cookie"));
+  QVERIFY(node->connect("sendmessagelib", "sendmessage", "cookie"));
 
   erl.execStatement("register(shell, self()).");
 
