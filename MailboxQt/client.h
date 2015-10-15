@@ -18,13 +18,16 @@ public:
     ~Client();
 
     bool connect(QByteArray name, QByteArray nodeName, QByteArray cookie);
+
     void sendAtom(QByteArray procName, QByteArray atom);
+    void sendPid(QByteArray procName);
 
 signals:
 
     void messageRecieved();
 
 public slots:
+    void listenerMessage();
 
 private:
 

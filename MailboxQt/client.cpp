@@ -38,6 +38,23 @@ void Client::sendAtom(QByteArray procName, QByteArray atom)
     ei_x_free(&x);
 }
 
+void Client::sendPid(QByteArray procName)
+{
+    ei_x_buff x;
+    ei_x_new_with_version(&x);
+
+    ei_x_encode_pid(&x, &(m_ec->self));
+
+    ei_reg_send(m_ec, m_fd, procName.data(), x.buff, x.index);
+
+    ei_x_free(&x);
+}
+
+void Client::listenerMessage()
+{
+    emit messageRecieved();
+}
+
 bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
 {
 
@@ -79,8 +96,12 @@ bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
     m_fd = fd;
 
     m_listener = new MsgListener(fd, this);
-    QObject::connect(m_listener, &MsgListener::messageRecieved, this, &Client::messageRecieved);
+
     QObject::connect(m_listener, &MsgListener::finished, m_listener, &QObject::deleteLater);
+
+    QObject::connect(m_listener, &MsgListener::messageRecieved,
+                     [=]() { emit messageRecieved(); });
+
     m_listener->start();
 
     return true;
