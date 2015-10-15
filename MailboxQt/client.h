@@ -15,8 +15,7 @@ public:
     explicit Client(QObject *parent = 0);
     ~Client();
 
-    bool connect(QByteArray otherNode, QByteArray name, QByteArray cookie);
-
+    bool connect(QByteArray name, QByteArray nodeName, QByteArray cookie);
     void sendAtom(QByteArray procName, QByteArray atom);
 
 signals:
@@ -26,7 +25,6 @@ signals:
 public slots:
 
 private:
-    short s_creation = 0;
 
     int m_fd;
     ei_cnode *m_ec;
