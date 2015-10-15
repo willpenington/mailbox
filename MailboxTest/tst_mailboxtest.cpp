@@ -126,7 +126,7 @@ void MailboxTest::canSendMessageToErlang()
 
   node->sendAtom("shell", "testmessage");
   
-  QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got sendmessage"));
+  QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got testmessage\n"));
 
   delete(node);
 }

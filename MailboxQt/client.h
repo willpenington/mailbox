@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "msglistener.h"
+
 struct ei_cnode_s;
 typedef struct ei_cnode_s ei_cnode;
 
@@ -28,6 +30,8 @@ private:
 
     int m_fd;
     ei_cnode *m_ec;
+
+    MsgListener *m_listener = nullptr;
 };
 
 }

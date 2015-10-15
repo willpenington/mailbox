@@ -12,16 +12,30 @@ Client::Client(QObject *parent) : QObject(parent)
 {
     m_ec = new ei_cnode();
     Q_ASSERT(m_ec != nullptr);
+
 }
 
 Client::~Client()
 {
+    if (m_listener != nullptr)
+    {
+        m_listener->quit();
+        m_listener->wait();
+    }
+
     delete m_ec;
 }
 
 void Client::sendAtom(QByteArray procName, QByteArray atom)
 {
+    ei_x_buff x;
+    ei_x_new_with_version(&x);
 
+    ei_x_encode_atom(&x, atom.data());
+
+    ei_reg_send(m_ec, m_fd, procName.data(), x.buff, x.index);
+
+    ei_x_free(&x);
 }
 
 bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
@@ -63,6 +77,12 @@ bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
     }
 
     m_fd = fd;
+
+    m_listener = new MsgListener(fd, this);
+    QObject::connect(m_listener, &MsgListener::messageRecieved, this, &Client::messageRecieved);
+    QObject::connect(m_listener, &MsgListener::finished, m_listener, &QObject::deleteLater);
+    m_listener->start();
+
     return true;
 }
 
