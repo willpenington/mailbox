@@ -26,6 +26,8 @@ signals:
 public slots:
 
 private:
+    short s_creation = 0;
+
     int m_fd;
     ei_cnode *m_ec;
 };
