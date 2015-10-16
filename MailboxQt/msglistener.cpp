@@ -17,14 +17,18 @@ void MsgListener::run()
     erlang_msg msg;
     ei_x_buff buff;
 
-    ei_x_new(&buff);
+    do {
+        ei_x_new(&buff);
 
-    length = ei_xreceive_msg_tmo(m_fd, &msg, &buff, 1000);
+        length = ei_xreceive_msg_tmo(m_fd, &msg, &buff, 1000);
 
-    if (length > 0 && (msg.msgtype == ERL_SEND || msg.msgtype == ERL_REG_SEND))
-        emit messageRecieved();
+        if (length > 0 && (msg.msgtype == ERL_SEND || msg.msgtype == ERL_REG_SEND))
+            emit messageRecieved();
 
-    ei_x_free(&buff);
+        ei_x_free(&buff);
+
+    } while (length > 0); // TODO: Replace with proper notification
 }
+
 
 } // namespace Mailbox

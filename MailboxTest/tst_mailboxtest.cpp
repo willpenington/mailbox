@@ -45,6 +45,11 @@ private Q_SLOTS:
     void canSendMessageToErlang();
     void canRecieveMessagesFromErlang();
 
+    void canSendMultipleMessagesToErlang();
+    void canRecieveMultipleMessagesFromErlang();
+
+    void unusedNodeDoesNotCrash();
+
 };
 
 MailboxTest::MailboxTest()
@@ -124,6 +129,8 @@ void MailboxTest::canSendMessageToErlang()
 
   erl.execStatement("register(shell, self()).");
 
+  QCOMPARE(erl.execStatement("flush()."), QByteArray("ok\n"));
+
   node->sendAtom("shell", "testmessage");
   
   QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got testmessage\n"));
@@ -143,10 +150,83 @@ void MailboxTest::canRecieveMessagesFromErlang()
     erl.execStatement("register(shell, self()).");
     node->sendPid("shell");
 
+    QCOMPARE(recvSpy.count(), 0);
+
     erl.execStatement("receive\n  Pid -> Pid ! hello \n end.");
 
     QVERIFY(recvSpy.count() == 1 || recvSpy.wait(1000));
 
+    delete(node);
+}
+
+void MailboxTest::canSendMultipleMessagesToErlang()
+{
+  ErlangShell erl("sendmultimessage", "cookie");
+  Mailbox::Client *node = new Mailbox::Client();
+  QVERIFY(node->connect("sendmultimessagelib", "sendmultimessage", "cookie"));
+
+  erl.execStatement("register(shell, self()).");
+
+  QCOMPARE(erl.execStatement("flush()."), QByteArray("ok\n"));
+
+  node->sendAtom("shell", "test1");
+
+  QThread::sleep(1);
+
+  QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got test1\n"));
+
+  node->sendAtom("shell", "test2");
+
+  QThread::sleep(1);
+
+  QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got test2\n"));
+
+  node->sendAtom("shell", "test3");
+
+  QThread::sleep(1);
+
+  QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got test3\n"));
+
+  delete(node);
+}
+
+void MailboxTest::canRecieveMultipleMessagesFromErlang()
+{
+
+    ErlangShell erl("rmm", "cookie");
+    Mailbox::Client *node = new Mailbox::Client();
+    QVERIFY(node->connect("rmml", "rmm", "cookie"));
+
+    QSignalSpy recvSpy(node, SIGNAL(messageRecieved()));
+
+    erl.execStatement("register(shell, self()).");
+    node->sendPid("shell");
+
+    QCOMPARE(recvSpy.count(), 0);
+
+    erl.execStatement("Pid = receive\n  Pid -> Pid\n end.");
+    erl.execStatement("Pid ! hello.");
+
+    QVERIFY(recvSpy.count() == 1 || recvSpy.wait(1000));
+
+    node->sendPid("shell");
+    erl.execStatement("Pid ! hello.");
+    QVERIFY(recvSpy.count() == 2 || recvSpy.wait(1000));
+
+    node->sendPid("shell");
+    erl.execStatement("Pid ! hello.");
+    QVERIFY(recvSpy.count() == 3 || recvSpy.wait(1000));
+
+    node->sendPid("shell");
+    erl.execStatement("Pid ! hello.");
+    QVERIFY(recvSpy.count() == 4 || recvSpy.wait(1000));
+
+    delete(node);
+}
+
+void MailboxTest::unusedNodeDoesNotCrash()
+{
+    Mailbox::Client *node = new Mailbox::Client();
     delete(node);
 }
 

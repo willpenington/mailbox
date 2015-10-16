@@ -1,5 +1,7 @@
 #include "client.h"
 
+#include <unistd.h>
+
 #include "ei_connect.h"
 
 #include <QDebug>
@@ -17,6 +19,8 @@ Client::Client(QObject *parent) : QObject(parent)
 
 Client::~Client()
 {
+    close(m_fd);
+
     if (m_listener != nullptr)
     {
         m_listener->quit();

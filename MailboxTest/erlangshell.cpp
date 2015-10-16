@@ -20,6 +20,8 @@ USA
 
 #include "erlangshell.h"
 
+#include <QDebug>
+
 ErlangShell::ErlangShell(QByteArray sname, QByteArray cookie)
 {
     proc.start(ERL_COMMAND + sname + ERL_COOKIE_FLAG + cookie);
@@ -51,7 +53,7 @@ QByteArray ErlangShell::execStatement(QByteArray statement) {
      * VM writes what is has when it has it and sometimes it takes a few
      * sections to get the full response. */
     do {
-        Q_ASSERT(proc.waitForReadyRead(100));
+        Q_ASSERT(proc.waitForReadyRead(300));
         response.append(proc.readLine());
     } while (!(response.endsWith('\n')));
 
