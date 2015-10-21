@@ -4,6 +4,7 @@ CONFIG += ordered
 
 SUBDIRS += \
     MailboxTest \
-    MailboxQt
+    MailboxQt \
+    ErltypesTest
 
 MailboxTest.depends = MailboxQt
