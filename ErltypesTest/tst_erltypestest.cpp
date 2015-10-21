@@ -25,6 +25,10 @@ USA
 
 #include "mailboxqt.h"
 #include "erlconversion.h"
+#include "erlpid.h"
+
+#include "ei.h"
+#include "erl_interface.h"
 
 class ErltypesTest : public QObject
 {
@@ -48,6 +52,23 @@ ErltypesTest::ErltypesTest()
 void ErltypesTest::initTestCase()
 {
     Mailbox::init();
+
+
+    ei_x_buff buff;
+
+    int index = buff.index;
+
+    ei_x_new(&buff);
+    ei_x_format(&buff, "[1,2,3]");
+
+    buff.index = index;
+
+    int type;
+    int size;
+
+    ei_get_type(buff.buff, &(buff.index), &type, &size);
+
+    qDebug() << "type:" << type << "size:" << size;
 }
 
 void ErltypesTest::cleanupTestCase()
@@ -61,15 +82,61 @@ void ErltypesTest::conversionToAndFromBuffer_data()
     QTest::addColumn<bool>("success");
 
     // Data
-    QTest::newRow("integer") << QVariant(10) << QVariant(10) << true;
-    QTest::newRow("float") << QVariant(7.3) << QVariant(7.3) << true;
+    QVariant ten_s = QVariant::fromValue((short) 10);
+    QVariant ten_i = QVariant::fromValue((int) 10);
+    QVariant ten_l = QVariant::fromValue((long) 10);
+
+    QTest::newRow("short") << QVariant::fromValue((short) 10) << QVariant(10) << true;
+    QTest::newRow("integer") << QVariant::fromValue((int) 10) << QVariant(10) << true;
+    QTest::newRow("long") << QVariant::fromValue((long) 10) << QVariant(10) << true;
+    QTest::newRow("long_long") << QVariant::fromValue((long long) 10) << QVariant(10) << true;
+
+    QTest::newRow("neg_short") << QVariant::fromValue((short) -10) << QVariant(-10) << true;
+    QTest::newRow("neg_integer") << QVariant::fromValue((int) -10) << QVariant(-10) << true;
+    QTest::newRow("neg_long") << QVariant::fromValue((long) -10) << QVariant(-10) << true;
+    QTest::newRow("neg_long_long") << QVariant::fromValue((long long) -10) << QVariant(-10) << true;
+
+    QTest::newRow("big_short") << QVariant::fromValue((short) SHRT_MAX - 2) << QVariant(SHRT_MAX - 2) << true;
+    QTest::newRow("big_int") << QVariant::fromValue((int) INT_MAX - 2) << QVariant(INT_MAX - 2) << true;
+    QTest::newRow("big_long") << QVariant::fromValue((long) LONG_MAX - 2) << QVariant::fromValue((long) LONG_MAX - 2) << true;
+    QTest::newRow("big_long_long") << QVariant::fromValue((long long) LONG_LONG_MAX - 2) << QVariant::fromValue((long long) LONG_LONG_MAX - 2) << true;
+
+    QTest::newRow("neg_big_short") << QVariant::fromValue((short) SHRT_MIN + 2) << QVariant(SHRT_MIN + 2) << true;
+    QTest::newRow("neg_big_int") << QVariant::fromValue((int) INT_MIN + 2) << QVariant(INT_MIN + 2) << true;
+    QTest::newRow("neg_big_long") << QVariant::fromValue((long) LONG_MIN + 2) << QVariant::fromValue((long) LONG_MIN + 2) << true;
+    QTest::newRow("neg_big_long_long") << QVariant::fromValue((long long) LONG_LONG_MIN + 2) << QVariant::fromValue((long long) LONG_LONG_MIN + 2) << true;
+
+    QTest::newRow("ushort") << QVariant::fromValue((unsigned short) 10) << QVariant(10) << true;
+    QTest::newRow("uinteger") << QVariant::fromValue((unsigned int) 10) << QVariant(10) << true;
+    QTest::newRow("ulong") << QVariant::fromValue((unsigned long) 10) << QVariant(10) << true;
+    QTest::newRow("ulong_long") << QVariant::fromValue((unsigned long long) 10) << QVariant(10) << true;
+
+    QTest::newRow("ubig_short") << QVariant::fromValue((unsigned short) USHRT_MAX - 2) << QVariant(USHRT_MAX - 2) << true;
+    QTest::newRow("ubig_int") << QVariant::fromValue((unsigned int) UINT_MAX - 2) << QVariant(UINT_MAX - 2) << true;
+    QTest::newRow("ubig_long") << QVariant::fromValue((unsigned long) ULONG_MAX - 2) << QVariant::fromValue((long) ULONG_MAX - 2) << true;
+    QTest::newRow("ubig_long") << QVariant::fromValue((unsigned long long) ULONG_LONG_MAX - 2) << QVariant::fromValue((long long) ULONG_LONG_MAX - 2) << true;
+
+    QTest::newRow("float") << QVariant((float) 7.3) << QVariant((float) 7.3) << true;
+    QTest::newRow("double") << QVariant((double) 7.3) << QVariant((double) 7.3) << true;
+
+    ETERM *epid = erl_mk_pid("testnode", 1, 2, 3);
+    erlang_pid pid;
+
+    ei_x_buff pidbuff;
+    ei_x_new(&pidbuff);
+    int pidindex = pidbuff.index;
+    ei_x_encode_term(&pidbuff, epid);
+    ei_decode_pid(pidbuff.buff, &pidindex, &pid);
+    ei_x_free(&pidbuff);
+
+    QTest::newRow("pid") << QVariant::fromValue(Mailbox::ErlPid(pid)) << QVariant::fromValue(Mailbox::ErlPid(pid)) << true;
 }
 
 void ErltypesTest::conversionToAndFromBuffer()
 {
     ei_x_buff buff;
 
-    ei_x_new_with_version(&buff);
+    ei_x_new(&buff);
 
     int index = buff.index;
 
@@ -84,6 +151,8 @@ void ErltypesTest::conversionToAndFromBuffer()
     buff.index = index;
 
     QVariant result = Mailbox::decode(&buff, &decode_ok);
+
+    ei_x_free(&buff);
 
     QFETCH(bool, success);
 
