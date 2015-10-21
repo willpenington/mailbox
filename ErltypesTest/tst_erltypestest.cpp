@@ -21,6 +21,9 @@ USA
 #include <QString>
 #include <QtTest>
 
+#include "mailboxqt.h"
+#include "erlconversion.h"
+
 class ErltypesTest : public QObject
 {
     Q_OBJECT
@@ -31,6 +34,7 @@ public:
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
+
     void conversionToAndFromBuffer_data();
     void conversionToAndFromBuffer();
 };
@@ -41,6 +45,7 @@ ErltypesTest::ErltypesTest()
 
 void ErltypesTest::initTestCase()
 {
+    Mailbox::init();
 }
 
 void ErltypesTest::cleanupTestCase()
@@ -49,14 +54,42 @@ void ErltypesTest::cleanupTestCase()
 
 void ErltypesTest::conversionToAndFromBuffer_data()
 {
-    QTest::addColumn<QString>("data");
-    QTest::newRow("0") << QString();
+    QTest::addColumn<QVariant>("data");
+    QTest::addColumn<QVariant>("expected");
+    QTest::addColumn<bool>("success");
+
+    // Data
+    QTest::newRow("integer") << QVariant(10) << QVariant(10) << true;
 }
 
 void ErltypesTest::conversionToAndFromBuffer()
 {
-    QFETCH(QString, data);
-    QVERIFY2(true, "Failure");
+    ei_x_buff buff;
+
+    ei_x_new_with_version(&buff);
+
+    int index = buff.index;
+
+    QFETCH(QVariant, data);
+    QFETCH(QVariant, expected);
+
+    bool encode_ok;
+    bool decode_ok;
+
+    encode_ok = Mailbox::encode(data, &buff);
+
+    buff.index = index;
+
+    QVariant result = Mailbox::decode(&buff, &decode_ok);
+
+    QFETCH(bool, success);
+
+    QCOMPARE(encode_ok, success);
+    QCOMPARE(decode_ok, success);
+
+    if (success)
+        QCOMPARE(result, expected);
+
 }
 
 QTEST_APPLESS_MAIN(ErltypesTest)
