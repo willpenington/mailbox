@@ -20,8 +20,21 @@ USA
 
 #include "erlconversion.h"
 
-erlconversion::erlconversion()
-{
+namespace Mailbox {
 
+QVariant decode(ei_x_buff *buff, bool *ok)
+{
+    *ok = false;
 }
 
+bool encode(QVariant var, ei_x_buff *buff)
+{
+    return false;
+}
+
+bool isErlangTerm(QVariant var)
+{
+    return false;
+}
+
+}

@@ -21,11 +21,17 @@ USA
 #ifndef ERLCONVERSION_H
 #define ERLCONVERSION_H
 
+#include "ei.h"
 
-class erlconversion
-{
-public:
-    erlconversion();
-};
+#include <QVariant>
+
+namespace Mailbox {
+
+QVariant decode(ei_x_buff *buff, bool *ok);
+bool encode(QVariant var, ei_x_buff *buff);
+
+bool isErlangTerm(QVariant var);
+
+}
 
 #endif // ERLCONVERSION_H

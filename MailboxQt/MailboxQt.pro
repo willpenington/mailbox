@@ -15,12 +15,14 @@ DEFINES += MAILBOXQT_LIBRARY
 
 SOURCES += mailboxqt.cpp \
     client.cpp \
-    msglistener.cpp
+    msglistener.cpp \
+    erlconversion.cpp
 
 HEADERS += mailboxqt.h\
         mailboxqt_global.h \
     client.h \
-    msglistener.h
+    msglistener.h \
+    erlconversion.h
 
 unix {
     target.path = /usr/lib
