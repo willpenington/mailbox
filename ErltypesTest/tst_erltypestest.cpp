@@ -21,6 +21,8 @@ USA
 #include <QString>
 #include <QtTest>
 
+#include <QDebug>
+
 #include "mailboxqt.h"
 #include "erlconversion.h"
 
@@ -60,6 +62,7 @@ void ErltypesTest::conversionToAndFromBuffer_data()
 
     // Data
     QTest::newRow("integer") << QVariant(10) << QVariant(10) << true;
+    QTest::newRow("float") << QVariant(7.3) << QVariant(7.3) << true;
 }
 
 void ErltypesTest::conversionToAndFromBuffer()
@@ -73,8 +76,8 @@ void ErltypesTest::conversionToAndFromBuffer()
     QFETCH(QVariant, data);
     QFETCH(QVariant, expected);
 
-    bool encode_ok;
-    bool decode_ok;
+    bool encode_ok = true;
+    bool decode_ok = true;
 
     encode_ok = Mailbox::encode(data, &buff);
 
@@ -87,8 +90,7 @@ void ErltypesTest::conversionToAndFromBuffer()
     QCOMPARE(encode_ok, success);
     QCOMPARE(decode_ok, success);
 
-    if (success)
-        QCOMPARE(result, expected);
+    QVERIFY(!success || result == expected);
 
 }
 

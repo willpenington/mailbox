@@ -21,14 +21,47 @@ USA
 #include "erlconversion.h"
 
 namespace Mailbox {
+bool encodeDouble(QVariant var, ei_x_buff *buff);
+QVariant decodeDouble(ei_x_buff *buff, bool *ok);
 
 QVariant decode(ei_x_buff *buff, bool *ok)
 {
-    *ok = false;
+
+    int type = 0;
+    int size = 0;
+
+
+    ei_get_type(buff->buff, &(buff->index), &type, &size);
+
+    switch(type) {
+    case ERL_FLOAT_EXT:
+        qDebug() << "ERL_FLOAT_EXT";
+        return decodeDouble(buff, ok);
+        break;
+    case ERL_INTEGER_EXT:
+        qDebug() << "ERL_ATOM_EXT";
+    default:
+        break;
+    }
+
+
+    if (ok != nullptr)
+        *ok = false;
+
+    return QVariant();
 }
 
 bool encode(QVariant var, ei_x_buff *buff)
 {
+    switch (var.type()) {
+    case QMetaType::Float:
+    case QMetaType::Double:
+        return encodeDouble(var, buff);
+        break;
+    default:
+        break;
+    }
+
     return false;
 }
 
@@ -36,5 +69,31 @@ bool isErlangTerm(QVariant var)
 {
     return false;
 }
+
+/* Type Specific Implementations */
+QVariant decodeDouble(ei_x_buff *buff, bool *ok)
+{
+    double val;
+    bool decode_ok;
+
+    if (ei_decode_double(buff->buff, &(buff->index), &val) != 0) {
+        *ok = false;
+        return QVariant();
+    }
+
+    return QVariant(val);
+}
+
+bool encodeDouble(QVariant var, ei_x_buff *buff)
+{
+    bool convert_ok = true;
+    double val = var.toDouble(&convert_ok);
+
+    if (!convert_ok)
+        return false;
+
+    return (ei_x_encode_double(buff, val) == 0);
+}
+
 
 }
