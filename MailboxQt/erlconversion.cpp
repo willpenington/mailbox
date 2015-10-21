@@ -148,7 +148,7 @@ QVariant decodeInt(ei_x_buff *buff, bool *ok)
 
     if (ei_decode_char(buff->buff, &(buff->index), &char_val) == 0) {
         *ok = true;
-        return QVariant::fromValue(char_val);
+        return QVariant::fromValue(static_cast<unsigned char>(char_val));
     }
 
     if (ei_decode_long(buff->buff, &(buff->index), &long_val) == 0) {
