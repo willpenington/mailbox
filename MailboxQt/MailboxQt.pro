@@ -17,14 +17,16 @@ SOURCES += mailboxqt.cpp \
     client.cpp \
     msglistener.cpp \
     erlconversion.cpp \
-    erlpid.cpp
+    erlpid.cpp \
+    erlref.cpp
 
 HEADERS += mailboxqt.h\
         mailboxqt_global.h \
     client.h \
     msglistener.h \
     erlconversion.h \
-    erlpid.h
+    erlpid.h \
+    erlref.h
 
 unix {
     target.path = /usr/lib

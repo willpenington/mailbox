@@ -10,6 +10,7 @@ namespace Mailbox {
 void init();
 
 extern unsigned int pidMetaType;
+extern unsigned int refMetaType;
 
 } // namespace Mailbox
 

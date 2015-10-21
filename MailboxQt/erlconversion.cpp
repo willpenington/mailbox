@@ -23,6 +23,7 @@ USA
 #include <QDebug>
 
 #include <erlpid.h>
+#include "erlref.h"
 
 #include "mailboxqt.h"
 
@@ -40,6 +41,9 @@ QVariant decodeInt(ei_x_buff *buff, bool *ok);
 
 bool encodePid(QVariant var, ei_x_buff *buff);
 QVariant decodePid(ei_x_buff *buff, bool *ok);
+
+bool encodeRef(QVariant var, ei_x_buff *buff);
+QVariant decodeRef(ei_x_buff *buff, bool *ok);
 
 
 QVariant decode(ei_x_buff *buff, bool *ok)
@@ -60,6 +64,9 @@ QVariant decode(ei_x_buff *buff, bool *ok)
         return decodeInt(buff, ok);
     case ERL_PID_EXT:
         return decodePid(buff, ok);
+    case ERL_NEW_REFERENCE_EXT:
+    case ERL_REFERENCE_EXT:
+        return decodeRef(buff, ok);
     default:
         qDebug() << type;
         qDebug() << size;
@@ -97,9 +104,10 @@ bool encode(QVariant var, ei_x_buff *buff)
         break;
     }
 
-    if (var.type() == pidMetaType)
+    if (var.userType() == pidMetaType)
         return encodePid(var, buff);
-
+    else if (var.userType() == refMetaType)
+        return encodeRef(var, buff);
 
     return false;
 }
@@ -258,6 +266,30 @@ bool encodePid(QVariant var, ei_x_buff *buff)
 
     bool encode_ok;
     encode_ok = ei_x_encode_pid(buff, &pid) == 0;
+
+    return encode_ok;
+}
+
+QVariant decodeRef(ei_x_buff *buff, bool *ok)
+{
+    erlang_ref val;
+
+    if (ei_decode_ref(buff->buff, &(buff->index), &val) != 0) {
+        *ok = false;
+        return QVariant();
+    }
+
+    return QVariant::fromValue(ErlRef(val));
+}
+
+bool encodeRef(QVariant var, ei_x_buff *buff)
+{
+    ErlRef val = qvariant_cast<ErlRef>(var);
+
+    erlang_ref ref = *(val.ref());
+
+    bool encode_ok;
+    encode_ok = ei_x_encode_ref(buff, &ref) == 0;
 
     return encode_ok;
 }

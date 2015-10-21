@@ -26,6 +26,7 @@ USA
 #include "mailboxqt.h"
 #include "erlconversion.h"
 #include "erlpid.h"
+#include "erlref.h"
 
 #include "ei.h"
 #include "erl_interface.h"
@@ -126,6 +127,15 @@ void ErltypesTest::conversionToAndFromBuffer_data()
     strcpy(pid.node, "testnode");
 
     QTest::newRow("pid") << QVariant::fromValue(Mailbox::ErlPid(pid)) << QVariant::fromValue(Mailbox::ErlPid(pid)) << true;
+
+    int refdata[3] = {1,2,3};
+    erlang_ref ref;
+    ref.creation = 1;
+    ref.len = 3;
+    memcpy(ref.n, &refdata, 3);
+    strcpy(pid.node, "testnode");
+
+    QTest::newRow("ref") << QVariant::fromValue(Mailbox::ErlRef(ref)) << QVariant::fromValue(Mailbox::ErlRef(ref)) << true;
 }
 
 void ErltypesTest::conversionToAndFromBuffer()
