@@ -119,15 +119,11 @@ void ErltypesTest::conversionToAndFromBuffer_data()
     QTest::newRow("float") << QVariant((float) 7.3) << QVariant((float) 7.3) << true;
     QTest::newRow("double") << QVariant((double) 7.3) << QVariant((double) 7.3) << true;
 
-    ETERM *epid = erl_mk_pid("testnode", 1, 2, 3);
     erlang_pid pid;
-
-    ei_x_buff pidbuff;
-    ei_x_new(&pidbuff);
-    int pidindex = pidbuff.index;
-    ei_x_encode_term(&pidbuff, epid);
-    ei_decode_pid(pidbuff.buff, &pidindex, &pid);
-    ei_x_free(&pidbuff);
+    pid.creation = 1;
+    pid.num = 2;
+    pid.serial = 3;
+    strcpy(pid.node, "testnode");
 
     QTest::newRow("pid") << QVariant::fromValue(Mailbox::ErlPid(pid)) << QVariant::fromValue(Mailbox::ErlPid(pid)) << true;
 }
