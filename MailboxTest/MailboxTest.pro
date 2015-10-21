@@ -31,4 +31,4 @@ else:unix: LIBS += -L$$OUT_PWD/../MailboxQt/ -lMailboxQt
 INCLUDEPATH += $$PWD/../MailboxQt
 DEPENDPATH += $$PWD/../MailboxQt
 
-PRE_TARGETDEPS += $$PWD/../MailboxQt/libMailboxQt.so
+#PRE_TARGETDEPS += $$PWD/../MailboxQt/libMailboxQt.so
