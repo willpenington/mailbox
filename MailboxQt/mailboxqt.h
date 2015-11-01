@@ -11,6 +11,7 @@ void init();
 
 extern unsigned int pidMetaType;
 extern unsigned int refMetaType;
+extern unsigned int portMetaType;
 
 } // namespace Mailbox
 

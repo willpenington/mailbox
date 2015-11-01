@@ -4,11 +4,13 @@
 
 #include "erlpid.h"
 #include "erlref.h"
+#include "erlport.h"
 
 namespace Mailbox {
 
 unsigned int pidMetaType = 0;
 unsigned int refMetaType = 0;
+unsigned int portMetaType = 0;
 
 void init() {
   erl_init(NULL, 0);
@@ -18,6 +20,9 @@ void init() {
 
   refMetaType = qRegisterMetaType<ErlRef>();
   QMetaType::registerEqualsComparator<ErlRef>();
+
+  portMetaType = qRegisterMetaType<ErlPort>();
+  QMetaType::registerEqualsComparator<ErlPort>();
 }
 
 }

@@ -24,6 +24,7 @@ USA
 
 #include <erlpid.h>
 #include "erlref.h"
+#include "erlport.h"
 
 #include "mailboxqt.h"
 
@@ -45,6 +46,8 @@ QVariant decodePid(ei_x_buff *buff, bool *ok);
 bool encodeRef(QVariant var, ei_x_buff *buff);
 QVariant decodeRef(ei_x_buff *buff, bool *ok);
 
+bool encodePort(QVariant var, ei_x_buff *buff);
+QVariant decodePort(ei_x_buff *buff, bool *ok);
 
 QVariant decode(ei_x_buff *buff, bool *ok)
 {
@@ -67,6 +70,8 @@ QVariant decode(ei_x_buff *buff, bool *ok)
     case ERL_NEW_REFERENCE_EXT:
     case ERL_REFERENCE_EXT:
         return decodeRef(buff, ok);
+    case ERL_PORT_EXT:
+        return decodePort(buff, ok);
     default:
         qDebug() << type;
         qDebug() << size;
@@ -108,6 +113,8 @@ bool encode(QVariant var, ei_x_buff *buff)
         return encodePid(var, buff);
     else if (var.userType() == refMetaType)
         return encodeRef(var, buff);
+    else if (var.userType() == portMetaType)
+        return encodePort(var, buff);
 
     return false;
 }
@@ -292,6 +299,25 @@ bool encodeRef(QVariant var, ei_x_buff *buff)
     encode_ok = ei_x_encode_ref(buff, &ref) == 0;
 
     return encode_ok;
+}
+
+QVariant decodePort(ei_x_buff *buff, bool *ok)
+{
+    erlang_port val;
+
+    if (ei_decode_port(buff->buff, &(buff->index), &val) != 0) {
+        *ok = false;
+        return QVariant();
+    }
+
+    return QVariant::fromValue(ErlPort(val));
+}
+
+bool encodePort(QVariant var, ei_x_buff *buff)
+{
+    ErlPort port = qvariant_cast<ErlPort>(var);
+
+    return ei_x_encode_port(buff, port.port()) == 0;
 }
 
 }

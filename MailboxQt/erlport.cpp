@@ -27,9 +27,22 @@ ErlPort::ErlPort()
 
 }
 
-ErlPort::ErlPort(erlang_port port)
+ErlPort::ErlPort(erlang_port port) :
+    m_port(port)
 {
 
+}
+
+erlang_port *ErlPort::port()
+{
+    return &m_port;
+}
+
+bool operator==(const ErlPort &p1, const ErlPort &p2)
+{
+    return (p1.m_port.creation == p2.m_port.creation)
+        && (p1.m_port.id == p2.m_port.id)
+        && (strcmp(p1.m_port.node, p2.m_port.node) == 0);
 }
 
 }

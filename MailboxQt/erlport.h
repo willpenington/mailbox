@@ -31,6 +31,14 @@ class ErlPort
 public:
     ErlPort();
     ErlPort(erlang_port port);
+
+    erlang_port *port();
+
+    friend bool operator ==(const ErlPort &p1, const ErlPort &p2);
+
+private:
+    erlang_port m_port;
+
 };
 
 }

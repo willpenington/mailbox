@@ -141,7 +141,7 @@ void ErltypesTest::conversionToAndFromBuffer_data()
     erlang_port port;
     port.creation = 1;
     port.id = 2;
-    strcpy(pid.node, "testnode");
+    strcpy(port.node, "testnode");
 
     QTest::newRow("port") << QVariant::fromValue(Mailbox::ErlPort(port)) << QVariant::fromValue(Mailbox::ErlPort(port)) << true;
 
