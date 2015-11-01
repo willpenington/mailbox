@@ -25,6 +25,7 @@ USA
 #include <erlpid.h>
 #include "erlref.h"
 #include "erlport.h"
+#include "erlatom.h"
 
 #include "mailboxqt.h"
 
@@ -49,6 +50,9 @@ QVariant decodeRef(ei_x_buff *buff, bool *ok);
 bool encodePort(QVariant var, ei_x_buff *buff);
 QVariant decodePort(ei_x_buff *buff, bool *ok);
 
+bool encodeAtom(QVariant var, ei_x_buff *buff);
+QVariant decodeAtom(ei_x_buff *buff, bool *ok);
+
 QVariant decode(ei_x_buff *buff, bool *ok)
 {
     int type = 0;
@@ -72,6 +76,11 @@ QVariant decode(ei_x_buff *buff, bool *ok)
         return decodeRef(buff, ok);
     case ERL_PORT_EXT:
         return decodePort(buff, ok);
+    case ERL_ATOM_EXT:
+    case ERL_ATOM_UTF8_EXT:
+    case ERL_SMALL_ATOM_UTF8_EXT:
+    case ERL_SMALL_ATOM_EXT:
+        return decodeAtom(buff, ok);
     default:
         qDebug() << type;
         qDebug() << size;
@@ -115,6 +124,8 @@ bool encode(QVariant var, ei_x_buff *buff)
         return encodeRef(var, buff);
     else if (var.userType() == portMetaType)
         return encodePort(var, buff);
+    else if (var.userType() == atomMetaType)
+        return encodeAtom(var, buff);
 
     return false;
 }
@@ -318,6 +329,37 @@ bool encodePort(QVariant var, ei_x_buff *buff)
     ErlPort port = qvariant_cast<ErlPort>(var);
 
     return ei_x_encode_port(buff, port.port()) == 0;
+}
+
+QVariant decodeAtom(ei_x_buff *buff, bool *ok)
+{
+    int type;
+    int size;
+
+    ei_get_type(buff->buff, &(buff->index), &type, &size);
+
+    char *namedata = new char[size + 100];
+    QVariant val;
+
+    if (ei_decode_atom(buff->buff, &(buff->index), namedata) == 0) {
+        QByteArray name(namedata, size);
+        val = QVariant::fromValue(ErlAtom(name));
+    } else {
+        val = QVariant();
+        *ok = false;
+    }
+
+    delete namedata;
+
+    return val;
+}
+
+bool encodeAtom(QVariant var, ei_x_buff *buff)
+{
+    ErlAtom atom = qvariant_cast<ErlAtom>(var);
+    QByteArray name = atom.name();
+
+    return ei_x_encode_atom(buff, name.data()) == 0;
 }
 
 }

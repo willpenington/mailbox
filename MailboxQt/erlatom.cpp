@@ -20,4 +20,28 @@ USA
 
 #include "erlatom.h"
 
+namespace Mailbox {
 
+ErlAtom::ErlAtom() :
+    m_name("")
+{
+
+}
+
+ErlAtom::ErlAtom(QByteArray name) :
+    m_name(name)
+{
+
+}
+
+QByteArray ErlAtom::name()
+{
+    return m_name;
+}
+
+bool operator ==(const ErlAtom &a1, const ErlAtom &a2)
+{
+    return a1.m_name == a2.m_name;
+}
+
+}

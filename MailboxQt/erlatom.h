@@ -30,14 +30,14 @@ class ErlAtom
 {
 public:
     ErlAtom();
-    ErlAtom(QString name);
+    ErlAtom(QByteArray name);
 
-    QString name();
+    QByteArray name();
 
     friend bool operator ==(const ErlAtom &a1, const ErlAtom &a2);
 
 private:
-    QString m_name;
+    QByteArray m_name;
 };
 
 }
