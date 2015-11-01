@@ -27,6 +27,7 @@ USA
 #include "erlconversion.h"
 #include "erlpid.h"
 #include "erlref.h"
+#include "erlport.h"
 
 #include "ei.h"
 #include "erl_interface.h"
@@ -136,6 +137,14 @@ void ErltypesTest::conversionToAndFromBuffer_data()
     strcpy(pid.node, "testnode");
 
     QTest::newRow("ref") << QVariant::fromValue(Mailbox::ErlRef(ref)) << QVariant::fromValue(Mailbox::ErlRef(ref)) << true;
+
+    erlang_port port;
+    port.creation = 1;
+    port.id = 2;
+    strcpy(pid.node, "testnode");
+
+    QTest::newRow("port") << QVariant::fromValue(Mailbox::ErlPort(port)) << QVariant::fromValue(Mailbox::ErlPort(port)) << true;
+
 }
 
 void ErltypesTest::conversionToAndFromBuffer()
