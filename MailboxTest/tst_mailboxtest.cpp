@@ -25,6 +25,8 @@ USA
 
 #include "erlangshell.h"
 
+#include "erlatom.h"
+
 #include "mailboxqt.h"
 #include "client.h"
 
@@ -129,6 +131,10 @@ void MailboxTest::canSendMessageToErlang_data()
     QTest::addColumn<QByteArray>("result");
 
     QTest::newRow("int") <<  QVariant(1) << QByteArray("1");
+
+    Mailbox::ErlAtom atom("testatom");
+
+    QTest::newRow("atom") << QVariant::fromValue(atom) << QByteArray("testatom");
 }
 
 void MailboxTest::canSendMessageToErlang()

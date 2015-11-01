@@ -47,6 +47,9 @@ private Q_SLOTS:
 
     void conversionToAndFromBuffer_data();
     void conversionToAndFromBuffer();
+
+    void printErlangTerm_data();
+    void printErlangTerm();
 };
 
 ErltypesTest::ErltypesTest()
@@ -179,6 +182,55 @@ void ErltypesTest::conversionToAndFromBuffer()
     QCOMPARE(decode_ok, success);
 
     QVERIFY(!success || result == expected);
+
+}
+
+void ErltypesTest::printErlangTerm_data()
+{
+    QTest::addColumn<QVariant>("erlang_value");
+    QTest::addColumn<QString>("expected");
+
+    QTest::newRow("int") << QVariant(1) << QString("1");
+    QTest::newRow("large_int") << QVariant(123456789) << "123456789";
+
+    QTest::newRow("float") << QVariant(1.1) << QString("1.100000");
+    QTest::newRow("big_float") << QVariant(123456.789) << "123456.789000";
+    QTest::newRow("round_float") << QVariant(1.0) << "1.000000";
+
+    QTest::newRow("atom") << QVariant::fromValue(Mailbox::ErlAtom("asdf")) << "asdf";
+
+    erlang_pid pid;
+    pid.creation = 1;
+    pid.num = 2;
+    pid.serial = 3;
+    strcpy(pid.node, "testnode");
+
+    QTest::newRow("pid") << QVariant::fromValue(Mailbox::ErlPid(pid)) << "<testnode.2.3>";
+
+    int refdata[3] = {1,2,3};
+    erlang_ref ref;
+    ref.creation = 1;
+    ref.len = 3;
+    memcpy(ref.n, &refdata, 3);
+    strcpy(pid.node, "testnode");
+
+    QTest::newRow("ref") << QVariant::fromValue(Mailbox::ErlRef(ref)) << "#Ref<1.0.0>";
+
+    erlang_port port;
+    port.creation = 1;
+    port.id = 2;
+    strcpy(port.node, "testnode");
+
+    QTest::newRow("port") << QVariant::fromValue(Mailbox::ErlPort(port)) << "#Port<2.1>";
+}
+
+void ErltypesTest::printErlangTerm()
+{
+    QFETCH(QVariant, erlang_value);
+
+    QString result = Mailbox::formatErlangTerm(erlang_value);
+
+    QTEST(result, "expected");
 
 }
 

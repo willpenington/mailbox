@@ -130,6 +130,22 @@ bool encode(QVariant var, ei_x_buff *buff)
     return false;
 }
 
+QString formatErlangTerm(QVariant var)
+{
+    ei_x_buff buff;
+    ei_x_new(&buff);
+    int index = buff.index;
+
+    encode(var, &buff);
+
+    char *result;
+
+    ei_s_print_term(&result, buff.buff, &index);
+
+    return QString(result);
+
+}
+
 /* Type Specific Implementations */
 QVariant decodeDouble(ei_x_buff *buff, bool *ok)
 {
