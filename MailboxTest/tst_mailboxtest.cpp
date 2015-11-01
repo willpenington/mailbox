@@ -27,6 +27,7 @@ USA
 
 #include "erlatom.h"
 
+
 #include "mailboxqt.h"
 #include "client.h"
 
@@ -128,19 +129,18 @@ void MailboxTest::clientCanConnectToErlang()
 void MailboxTest::canSendMessageToErlang_data()
 {
     QTest::addColumn<QVariant>("value");
-    QTest::addColumn<QByteArray>("result");
 
-    QTest::newRow("int") <<  QVariant(1) << QByteArray("1");
+    QTest::newRow("int") <<  QVariant(1);
 
     Mailbox::ErlAtom atom("testatom");
 
-    QTest::newRow("atom") << QVariant::fromValue(atom) << QByteArray("testatom");
+    QTest::newRow("atom") << QVariant::fromValue(atom);
+
 }
 
 void MailboxTest::canSendMessageToErlang()
 {
   QFETCH(QVariant, value);
-  QFETCH(QByteArray, result);
 
   ErlangShell erl("sendmessage", "cookie");
   Mailbox::Client *node = new Mailbox::Client();
@@ -152,7 +152,7 @@ void MailboxTest::canSendMessageToErlang()
 
   node->sendMessage("shell", value);
 
-  QByteArray full_result = QByteArray("Shell got ") + result + QByteArray("\n");
+  QByteArray full_result = QByteArray("Shell got ") + Mailbox::formatErlangTerm(value).toLatin1() + QByteArray("\n");
   
   QCOMPARE(erl.execStatement("flush()."), full_result);
 

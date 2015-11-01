@@ -14,6 +14,8 @@ extern unsigned int refMetaType;
 extern unsigned int portMetaType;
 extern unsigned int atomMetaType;
 
+QString formatErlangTerm(QVariant var);
+
 } // namespace Mailbox
 
 #endif // MAILBOXQT_H

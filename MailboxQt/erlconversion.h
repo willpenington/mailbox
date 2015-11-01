@@ -30,7 +30,6 @@ namespace Mailbox {
 QVariant decode(ei_x_buff *buff, bool *ok);
 bool encode(QVariant var, ei_x_buff *buff);
 
-QString formatErlangTerm(QVariant var);
 
 bool isErlangTerm(QVariant var);
 
