@@ -25,9 +25,11 @@ USA
 
 #include "mailboxqt.h"
 #include "erlconversion.h"
+
 #include "erlpid.h"
 #include "erlref.h"
 #include "erlport.h"
+#include "erlatom.h"
 
 #include "ei.h"
 #include "erl_interface.h"
@@ -144,6 +146,8 @@ void ErltypesTest::conversionToAndFromBuffer_data()
     strcpy(port.node, "testnode");
 
     QTest::newRow("port") << QVariant::fromValue(Mailbox::ErlPort(port)) << QVariant::fromValue(Mailbox::ErlPort(port)) << true;
+
+    QTest::newRow("atom") << QVariant::fromValue(Mailbox::ErlAtom("atomname")) << QVariant::fromValue(Mailbox::ErlAtom("atomname")) << true;
 
 }
 
