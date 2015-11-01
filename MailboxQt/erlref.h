@@ -32,6 +32,8 @@ public:
     ErlRef();
     ErlRef(erlang_ref ref);
 
+    ~ErlRef();
+
     erlang_ref *ref();
 
     friend bool operator ==(const ErlRef &r1, const ErlRef &r2);

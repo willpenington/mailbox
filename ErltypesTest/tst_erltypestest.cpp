@@ -207,14 +207,15 @@ void ErltypesTest::printErlangTerm_data()
 
     QTest::newRow("pid") << QVariant::fromValue(Mailbox::ErlPid(pid)) << "<testnode.2.3>";
 
-    int refdata[3] = {1,2,3};
     erlang_ref ref;
     ref.creation = 1;
     ref.len = 3;
-    memcpy(ref.n, &refdata, 3);
+    ref.n[0] = 1;
+    ref.n[1] = 2;
+    ref.n[2] = 3;
     strcpy(pid.node, "testnode");
 
-    QTest::newRow("ref") << QVariant::fromValue(Mailbox::ErlRef(ref)) << "#Ref<1.0.0>";
+    QTest::newRow("ref") << QVariant::fromValue(Mailbox::ErlRef(ref)) << "#Ref<1.2.3>";
 
     erlang_port port;
     port.creation = 1;

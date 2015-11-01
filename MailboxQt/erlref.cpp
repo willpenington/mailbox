@@ -30,7 +30,6 @@ ErlRef::ErlRef()
 ErlRef::ErlRef(erlang_ref ref) :
     m_ref(ref)
 {
-
 }
 
 erlang_ref *ErlRef::ref()
@@ -38,11 +37,14 @@ erlang_ref *ErlRef::ref()
     return &m_ref;
 }
 
+ErlRef::~ErlRef() {
+}
+
 bool operator ==(const ErlRef &r1, const ErlRef &r2)
 {
     return (r1.m_ref.creation == r2.m_ref.creation)
         && (r1.m_ref.len == r2.m_ref.len)
-        && (memcmp(r1.m_ref.n, r2.m_ref.n, r1.m_ref.len) == 0)
+        && (memcmp(r1.m_ref.n, r2.m_ref.n, 3)== 0)
         && (strcmp(r1.m_ref.node, r2.m_ref.node) == 0);
 
 }
