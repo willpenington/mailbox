@@ -4,6 +4,8 @@
 
 #include "ei_connect.h"
 
+#include "erlconversion.h"
+
 #include <QDebug>
 
 namespace Mailbox {
@@ -49,6 +51,17 @@ void Client::sendPid(QByteArray procName)
 
     ei_x_encode_pid(&x, &(m_ec->self));
 
+    ei_reg_send(m_ec, m_fd, procName.data(), x.buff, x.index);
+
+    ei_x_free(&x);
+}
+
+void Client::sendMessage(QByteArray procName, QVariant value)
+{
+    ei_x_buff x;
+    ei_x_new_with_version(&x);
+
+    encode(value, &x);
     ei_reg_send(m_ec, m_fd, procName.data(), x.buff, x.index);
 
     ei_x_free(&x);

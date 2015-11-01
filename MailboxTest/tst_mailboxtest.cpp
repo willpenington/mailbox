@@ -42,7 +42,9 @@ private Q_SLOTS:
     void clientCanConnectToErlang_data();
     void clientCanConnectToErlang();
 
+    void canSendMessageToErlang_data();
     void canSendMessageToErlang();
+
     void canRecieveMessagesFromErlang();
 
     void canSendMultipleMessagesToErlang();
@@ -121,8 +123,19 @@ void MailboxTest::clientCanConnectToErlang()
   delete(node);
 }
 
+void MailboxTest::canSendMessageToErlang_data()
+{
+    QTest::addColumn<QVariant>("value");
+    QTest::addColumn<QByteArray>("result");
+
+    QTest::newRow("int") <<  QVariant(1) << QByteArray("1");
+}
+
 void MailboxTest::canSendMessageToErlang()
 {
+  QFETCH(QVariant, value);
+  QFETCH(QByteArray, result);
+
   ErlangShell erl("sendmessage", "cookie");
   Mailbox::Client *node = new Mailbox::Client();
   QVERIFY(node->connect("sendmessagelib", "sendmessage", "cookie"));
@@ -131,9 +144,11 @@ void MailboxTest::canSendMessageToErlang()
 
   QCOMPARE(erl.execStatement("flush()."), QByteArray("ok\n"));
 
-  node->sendAtom("shell", "testmessage");
+  node->sendMessage("shell", value);
+
+  QByteArray full_result = QByteArray("Shell got ") + result + QByteArray("\n");
   
-  QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got testmessage\n"));
+  QCOMPARE(erl.execStatement("flush()."), full_result);
 
   delete(node);
 }

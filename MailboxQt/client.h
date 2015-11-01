@@ -22,6 +22,8 @@ public:
     void sendAtom(QByteArray procName, QByteArray atom);
     void sendPid(QByteArray procName);
 
+    void sendMessage(QByteArray procName, QVariant value);
+
 signals:
 
     void messageRecieved();
