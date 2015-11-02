@@ -55,6 +55,9 @@ private Q_SLOTS:
     void canSendMultipleMessagesToErlang();
     void canRecieveMultipleMessagesFromErlang();
 
+    void canRoundTripFromCNode_data();
+    void canRoundTripFromCNode();
+
     void unusedNodeDoesNotCrash();
 
 };
@@ -306,6 +309,42 @@ void MailboxTest::canRecieveMultipleMessagesFromErlang()
     QVERIFY(recvSpy.count() == 4 || recvSpy.wait(1000));
 
     delete(node);
+}
+
+void MailboxTest::canRoundTripFromCNode_data()
+{
+
+    QTest::addColumn<QVariant>("value");
+
+    QVariantMap::const_iterator i = simpleValues.constBegin();
+
+    while (i != simpleValues.constEnd()) {
+        QTest::newRow(i.key().toLocal8Bit().data()) << i.value();
+        i++;
+    }
+}
+
+void MailboxTest::canRoundTripFromCNode()
+{
+    QFETCH(QVariant, value);
+
+    ErlangShell erl("roundtrip", "cookie");
+    Mailbox::Client *node = new Mailbox::Client();
+    QVERIFY(node->connect("roundtriplib", "roundtrip", "cookie"));
+
+    QSignalSpy recvSpy(node, &Mailbox::Client::messageRecieved);
+
+    erl.execStatement("register(shell, self()).");
+    node->sendPid("shell");
+
+    QCOMPARE(recvSpy.count(), 0);
+
+    erl.execStatement("Pid = receive\n  Pid -> Pid\n end.");
+    node->sendMessage("shell", value);
+    erl.execStatement("receive\n Val -> Pid ! Val\n end.");
+
+    QVERIFY(recvSpy.count() == 1 || recvSpy.wait(1000));
+    QCOMPARE(recvSpy.takeFirst()[0], value);
 }
 
 void MailboxTest::unusedNodeDoesNotCrash()
