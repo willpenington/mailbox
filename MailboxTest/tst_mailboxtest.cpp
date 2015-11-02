@@ -158,6 +158,29 @@ void MailboxTest::canSendMessageToErlang_data()
     }
 }
 
+QString erl_output(QVariant value)
+{
+    QString raw = Mailbox::formatErlangTerm(value);
+
+    QRegularExpression re;
+    re.setPattern("(\\d+\\.\\d*?[1-9])0+");
+    QRegularExpressionMatch match =  re.match(raw);
+    if (match.hasMatch()) {
+        QString result = match.captured(1);
+        return result;
+    }
+
+    re.setPattern("(\\d+\\.0)0+");
+    match =  re.match(raw);
+
+    if (match.hasMatch()) {
+        QString result = match.captured(1);
+        return result;
+    }
+
+    return raw;
+}
+
 void MailboxTest::canSendMessageToErlang()
 {
   QFETCH(QVariant, value);
@@ -172,7 +195,8 @@ void MailboxTest::canSendMessageToErlang()
 
   node->sendMessage("shell", value);
 
-  QByteArray full_result = QByteArray("Shell got ") + Mailbox::formatErlangTerm(value).toLatin1() + QByteArray("\n");
+
+  QByteArray full_result = QByteArray("Shell got ") + erl_output(value).toLatin1() + QByteArray("\n");
   
   QCOMPARE(erl.execStatement("flush()."), full_result);
 

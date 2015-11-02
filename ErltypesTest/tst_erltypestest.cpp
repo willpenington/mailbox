@@ -206,6 +206,7 @@ void ErltypesTest::printErlangTerm()
 
 }
 
+
 QTEST_APPLESS_MAIN(ErltypesTest)
 
 #include "tst_erltypestest.moc"
