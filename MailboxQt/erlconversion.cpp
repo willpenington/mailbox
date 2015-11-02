@@ -138,9 +138,13 @@ QString formatErlangTerm(QVariant var)
 
     encode(var, &buff);
 
-    char *result;
+    char result[MAXATOMLEN_UTF8];
+    char *result_ptr = result;
 
-    ei_s_print_term(&result, buff.buff, &index);
+    ei_s_print_term(&result_ptr, buff.buff, &index);
+
+    QString str(result);
+    return str;
 
     return QString(result);
 

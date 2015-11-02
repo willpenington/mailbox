@@ -26,13 +26,12 @@ USA
 #include "mailboxqt.h"
 #include "erlconversion.h"
 
-#include "erlpid.h"
-#include "erlref.h"
-#include "erlport.h"
 #include "erlatom.h"
 
 #include "ei.h"
 #include "erl_interface.h"
+
+#include "erlvartypes.h"
 
 class ErltypesTest : public QObject
 {
@@ -126,29 +125,14 @@ void ErltypesTest::conversionToAndFromBuffer_data()
     QTest::newRow("float") << QVariant((float) 7.3) << QVariant((float) 7.3) << true;
     QTest::newRow("double") << QVariant((double) 7.3) << QVariant((double) 7.3) << true;
 
-    erlang_pid pid;
-    pid.creation = 1;
-    pid.num = 2;
-    pid.serial = 3;
-    strcpy(pid.node, "testnode");
+    QVariant pid = Mailbox::build_erl_pid(1, 2, 3, "testnode");
+    QTest::newRow("pid") << pid << pid << true;
 
-    QTest::newRow("pid") << QVariant::fromValue(Mailbox::ErlPid(pid)) << QVariant::fromValue(Mailbox::ErlPid(pid)) << true;
+    QVariant ref = Mailbox::build_erl_ref(3, 1, 2, 3, 1, "testnode");
+    QTest::newRow("ref") << ref << ref << true;
 
-    int refdata[3] = {1,2,3};
-    erlang_ref ref;
-    ref.creation = 1;
-    ref.len = 3;
-    memcpy(ref.n, &refdata, 3);
-    strcpy(pid.node, "testnode");
-
-    QTest::newRow("ref") << QVariant::fromValue(Mailbox::ErlRef(ref)) << QVariant::fromValue(Mailbox::ErlRef(ref)) << true;
-
-    erlang_port port;
-    port.creation = 1;
-    port.id = 2;
-    strcpy(port.node, "testnode");
-
-    QTest::newRow("port") << QVariant::fromValue(Mailbox::ErlPort(port)) << QVariant::fromValue(Mailbox::ErlPort(port)) << true;
+    QVariant port = Mailbox::build_erl_port(1, 2, "testnode");
+    QTest::newRow("port") << port << port << true;
 
     QTest::newRow("atom") << QVariant::fromValue(Mailbox::ErlAtom("atomname")) << QVariant::fromValue(Mailbox::ErlAtom("atomname")) << true;
 
@@ -199,30 +183,17 @@ void ErltypesTest::printErlangTerm_data()
 
     QTest::newRow("atom") << QVariant::fromValue(Mailbox::ErlAtom("asdf")) << "asdf";
 
-    erlang_pid pid;
-    pid.creation = 1;
-    pid.num = 2;
-    pid.serial = 3;
-    strcpy(pid.node, "testnode");
+    QVariant pid = Mailbox::build_erl_pid(1, 2, 3, "testnode");
 
-    QTest::newRow("pid") << QVariant::fromValue(Mailbox::ErlPid(pid)) << "<testnode.2.3>";
+    QTest::newRow("pid") << pid << "<testnode.2.3>";
 
-    erlang_ref ref;
-    ref.creation = 1;
-    ref.len = 3;
-    ref.n[0] = 1;
-    ref.n[1] = 2;
-    ref.n[2] = 3;
-    strcpy(pid.node, "testnode");
+    QVariant ref = Mailbox::build_erl_ref(3, 1, 2, 3, 1, "testnode");
 
-    QTest::newRow("ref") << QVariant::fromValue(Mailbox::ErlRef(ref)) << "#Ref<1.2.3>";
+    QTest::newRow("ref") << ref << "#Ref<1.2.3>";
 
-    erlang_port port;
-    port.creation = 1;
-    port.id = 2;
-    strcpy(port.node, "testnode");
+    QVariant port = Mailbox::build_erl_port(1, 2, "testnode");
 
-    QTest::newRow("port") << QVariant::fromValue(Mailbox::ErlPort(port)) << "#Port<2.1>";
+    QTest::newRow("port") << port << "#Port<1.2>";
 }
 
 void ErltypesTest::printErlangTerm()

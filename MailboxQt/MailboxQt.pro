@@ -20,7 +20,8 @@ SOURCES += mailboxqt.cpp \
     erlpid.cpp \
     erlref.cpp \
     erlport.cpp \
-    erlatom.cpp
+    erlatom.cpp \
+    erlvartypes.cpp
 
 HEADERS += mailboxqt.h\
         mailboxqt_global.h \
@@ -30,7 +31,8 @@ HEADERS += mailboxqt.h\
     erlpid.h \
     erlref.h \
     erlport.h \
-    erlatom.h
+    erlatom.h \
+    erlvartypes.h
 
 unix {
     target.path = /usr/lib
