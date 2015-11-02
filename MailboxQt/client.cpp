@@ -67,9 +67,9 @@ void Client::sendMessage(QByteArray procName, QVariant value)
     ei_x_free(&x);
 }
 
-void Client::listenerMessage()
+void Client::listenerMessage(QVariant value)
 {
-    emit messageRecieved();
+    emit messageRecieved(value);
 }
 
 bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
@@ -117,7 +117,7 @@ bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
     QObject::connect(m_listener, &MsgListener::finished, m_listener, &QObject::deleteLater);
 
     QObject::connect(m_listener, &MsgListener::messageRecieved,
-                     [=]() { emit messageRecieved(); });
+                     [=](QVariant value) { emit messageRecieved(value); });
 
     m_listener->start();
 

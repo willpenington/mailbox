@@ -2,6 +2,8 @@
 
 #include <ei_connect.h>
 
+#include "erlconversion.h"
+
 namespace Mailbox {
 
 MsgListener::MsgListener(int fd, QObject *parent) :
@@ -19,11 +21,22 @@ void MsgListener::run()
 
     do {
         ei_x_new(&buff);
-
         length = ei_xreceive_msg_tmo(m_fd, &msg, &buff, 1000);
 
-        if (length > 0 && (msg.msgtype == ERL_SEND || msg.msgtype == ERL_REG_SEND))
-            emit messageRecieved();
+        if (length > 0 && (msg.msgtype == ERL_SEND || msg.msgtype == ERL_REG_SEND)) {
+            // Reset the buffer to read from the start
+            buff.index = 0;
+
+            // Read off the version magic number to shift the index
+            int version;
+            ei_decode_version(buff.buff, &buff.index, &version);
+
+            bool ok = true;
+            QVariant var = decode(&buff, &ok);
+
+            if (ok)
+                emit messageRecieved(var);
+        }
 
         ei_x_free(&buff);
 

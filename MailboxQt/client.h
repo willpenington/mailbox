@@ -2,6 +2,7 @@
 #define CLIENT_H
 
 #include <QObject>
+#include <QVariant>
 
 #include "msglistener.h"
 
@@ -26,10 +27,10 @@ public:
 
 signals:
 
-    void messageRecieved();
+    void messageRecieved(QVariant value);
 
 public slots:
-    void listenerMessage();
+    void listenerMessage(QVariant value);
 
 private:
 

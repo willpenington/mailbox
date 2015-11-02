@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QThread>
+#include <QVariant>
 
 namespace Mailbox {
 
@@ -15,7 +16,7 @@ public:
     explicit MsgListener(int fd, QObject *parent = 0);
 
 signals:
-    void messageRecieved();
+    void messageRecieved(QVariant value);
 
 public slots:
 

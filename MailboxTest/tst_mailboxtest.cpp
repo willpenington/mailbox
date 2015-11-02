@@ -26,6 +26,7 @@ USA
 #include "erlangshell.h"
 
 #include "erlatom.h"
+#include "erlvartypes.h"
 
 
 #include "mailboxqt.h"
@@ -48,6 +49,7 @@ private Q_SLOTS:
     void canSendMessageToErlang_data();
     void canSendMessageToErlang();
 
+    void canRecieveMessagesFromErlang_data();
     void canRecieveMessagesFromErlang();
 
     void canSendMultipleMessagesToErlang();
@@ -55,6 +57,14 @@ private Q_SLOTS:
 
     void unusedNodeDoesNotCrash();
 
+};
+
+QVariantMap simpleValues {
+    {"int", 5},
+    {"float", 4.3},
+    {"round_float", 4.0},
+    {"large_int", 1000000},
+    {"atom", QVariant::fromValue(Mailbox::ErlAtom("testatom"))}
 };
 
 MailboxTest::MailboxTest()
@@ -128,14 +138,24 @@ void MailboxTest::clientCanConnectToErlang()
 
 void MailboxTest::canSendMessageToErlang_data()
 {
+//    QTest::addColumn<QVariant>("value");
+
+//    QTest::newRow("int") <<  QVariant(1);
+
+//    Mailbox::ErlAtom atom("testatom");
+
+//    QTest::newRow("atom") << QVariant::fromValue(atom);
+
+
+
     QTest::addColumn<QVariant>("value");
 
-    QTest::newRow("int") <<  QVariant(1);
+    QVariantMap::const_iterator i = simpleValues.constBegin();
 
-    Mailbox::ErlAtom atom("testatom");
-
-    QTest::newRow("atom") << QVariant::fromValue(atom);
-
+    while (i != simpleValues.constEnd()) {
+        QTest::newRow(i.key().toLocal8Bit().data()) << i.value();
+        i++;
+    }
 }
 
 void MailboxTest::canSendMessageToErlang()
@@ -159,6 +179,19 @@ void MailboxTest::canSendMessageToErlang()
   delete(node);
 }
 
+void MailboxTest::canRecieveMessagesFromErlang_data()
+{
+    QTest::addColumn<QVariant>("value");
+
+    QVariantMap::const_iterator i = simpleValues.constBegin();
+
+    while (i != simpleValues.constEnd()) {
+        QTest::newRow(i.key().toLocal8Bit().data()) << i.value();
+        i++;
+    }
+
+}
+
 void MailboxTest::canRecieveMessagesFromErlang()
 {
 
@@ -166,16 +199,22 @@ void MailboxTest::canRecieveMessagesFromErlang()
     Mailbox::Client *node = new Mailbox::Client();
     QVERIFY(node->connect("recvmessagelib", "recvmessage", "cookie"));
 
-    QSignalSpy recvSpy(node, SIGNAL(messageRecieved()));
+    QSignalSpy recvSpy(node, &Mailbox::Client::messageRecieved);
 
     erl.execStatement("register(shell, self()).");
     node->sendPid("shell");
 
     QCOMPARE(recvSpy.count(), 0);
 
-    erl.execStatement("receive\n  Pid -> Pid ! hello \n end.");
+    QFETCH(QVariant, value);
+    QByteArray val_str = Mailbox::formatErlangTerm(value).toUtf8();
+
+    QString stmt = "receive\n Pid -> Pid ! " + val_str + "\n end.";
+
+    erl.execStatement(stmt.toUtf8());
 
     QVERIFY(recvSpy.count() == 1 || recvSpy.wait(1000));
+    QCOMPARE(recvSpy.takeFirst()[0], value);
 
     delete(node);
 }
@@ -218,7 +257,7 @@ void MailboxTest::canRecieveMultipleMessagesFromErlang()
     Mailbox::Client *node = new Mailbox::Client();
     QVERIFY(node->connect("rmml", "rmm", "cookie"));
 
-    QSignalSpy recvSpy(node, SIGNAL(messageRecieved()));
+    QSignalSpy recvSpy(node, &Mailbox::Client::messageRecieved);
 
     erl.execStatement("register(shell, self()).");
     node->sendPid("shell");
