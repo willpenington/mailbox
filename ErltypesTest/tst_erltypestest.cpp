@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@ USA
 
 #include <QDebug>
 
-#include "mailboxqt.h"
+#include "mailslotqt.h"
 #include "erlconversion.h"
 
 #include "erlatom.h"
@@ -57,7 +57,7 @@ ErltypesTest::ErltypesTest()
 
 void ErltypesTest::initTestCase()
 {
-    Mailbox::init();
+    MailSlot::init();
 
 
     ei_x_buff buff;
@@ -125,16 +125,16 @@ void ErltypesTest::conversionToAndFromBuffer_data()
     QTest::newRow("float") << QVariant((float) 7.3) << QVariant((float) 7.3) << true;
     QTest::newRow("double") << QVariant((double) 7.3) << QVariant((double) 7.3) << true;
 
-    QVariant pid = Mailbox::build_erl_pid(1, 2, 3, "testnode");
+    QVariant pid = MailSlot::build_erl_pid(1, 2, 3, "testnode");
     QTest::newRow("pid") << pid << pid << true;
 
-    QVariant ref = Mailbox::build_erl_ref(3, 1, 2, 3, 1, "testnode");
+    QVariant ref = MailSlot::build_erl_ref(3, 1, 2, 3, 1, "testnode");
     QTest::newRow("ref") << ref << ref << true;
 
-    QVariant port = Mailbox::build_erl_port(1, 2, "testnode");
+    QVariant port = MailSlot::build_erl_port(1, 2, "testnode");
     QTest::newRow("port") << port << port << true;
 
-    QTest::newRow("atom") << QVariant::fromValue(Mailbox::ErlAtom("atomname")) << QVariant::fromValue(Mailbox::ErlAtom("atomname")) << true;
+    QTest::newRow("atom") << QVariant::fromValue(MailSlot::ErlAtom("atomname")) << QVariant::fromValue(MailSlot::ErlAtom("atomname")) << true;
 
 }
 
@@ -152,11 +152,11 @@ void ErltypesTest::conversionToAndFromBuffer()
     bool encode_ok = true;
     bool decode_ok = true;
 
-    encode_ok = Mailbox::encode(data, &buff);
+    encode_ok = MailSlot::encode(data, &buff);
 
     buff.index = index;
 
-    QVariant result = Mailbox::decode(&buff, &decode_ok);
+    QVariant result = MailSlot::decode(&buff, &decode_ok);
 
     ei_x_free(&buff);
 
@@ -181,17 +181,17 @@ void ErltypesTest::printErlangTerm_data()
     QTest::newRow("big_float") << QVariant(123456.789) << "123456.789000";
     QTest::newRow("round_float") << QVariant(1.0) << "1.000000";
 
-    QTest::newRow("atom") << QVariant::fromValue(Mailbox::ErlAtom("asdf")) << "asdf";
+    QTest::newRow("atom") << QVariant::fromValue(MailSlot::ErlAtom("asdf")) << "asdf";
 
-    QVariant pid = Mailbox::build_erl_pid(1, 2, 3, "testnode");
+    QVariant pid = MailSlot::build_erl_pid(1, 2, 3, "testnode");
 
     QTest::newRow("pid") << pid << "<testnode.2.3>";
 
-    QVariant ref = Mailbox::build_erl_ref(3, 1, 2, 3, 1, "testnode");
+    QVariant ref = MailSlot::build_erl_ref(3, 1, 2, 3, 1, "testnode");
 
     QTest::newRow("ref") << ref << "#Ref<1.2.3>";
 
-    QVariant port = Mailbox::build_erl_port(1, 2, "testnode");
+    QVariant port = MailSlot::build_erl_port(1, 2, "testnode");
 
     QTest::newRow("port") << port << "#Port<1.2>";
 }
@@ -200,7 +200,7 @@ void ErltypesTest::printErlangTerm()
 {
     QFETCH(QVariant, erlang_value);
 
-    QString result = Mailbox::formatErlangTerm(erlang_value);
+    QString result = MailSlot::formatErlangTerm(erlang_value);
 
     QTEST(result, "expected");
 

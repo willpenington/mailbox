@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -27,9 +27,9 @@ USA
 #include "erlport.h"
 #include "erlatom.h"
 
-#include "mailboxqt.h"
+#include "mailslotqt.h"
 
-namespace Mailbox {
+namespace MailSlot {
 bool encodeDouble(QVariant var, ei_x_buff *buff);
 QVariant decodeDouble(ei_x_buff *buff, bool *ok);
 

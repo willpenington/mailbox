@@ -3,8 +3,8 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += \
-    MailboxTest \
-    MailboxQt \
+    MailSlotTest \
+    MailSlotQt \
     ErltypesTest
 
-MailboxTest.depends = MailboxQt
+MailSlotTest.depends = MailSlotQt

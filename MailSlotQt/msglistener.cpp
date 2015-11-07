@@ -4,7 +4,7 @@
 
 #include "erlconversion.h"
 
-namespace Mailbox {
+namespace MailSlot {
 
 MsgListener::MsgListener(int fd, QObject *parent) :
     QThread(parent),
@@ -44,4 +44,4 @@ void MsgListener::run()
 }
 
 
-} // namespace Mailbox
+} // namespace MailSlot

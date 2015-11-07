@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -18,20 +18,32 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 USA
 */
 
-#ifndef ERLVARTYPES_H
-#define ERLVARTYPES_H
+#ifndef ERLREF_H
+#define ERLREF_H
 
-#include <QVariant>
+#include <QObject>
+#include "ei.h"
 
-namespace Mailbox {
-// A set of functions for generating Erlang types without importing ei
+namespace MailSlot {
 
-QVariant build_erl_pid(unsigned int creation, unsigned int num, unsigned int serial, QString node);
-QVariant build_erl_port(unsigned int id, unsigned int creation, QString node);
-QVariant build_erl_ref(int len, unsigned int a, unsigned int b, unsigned int c, unsigned int creation, QString node);
+class ErlRef
+{
+public:
+    ErlRef();
+    ErlRef(erlang_ref ref);
 
+    ~ErlRef();
+
+    erlang_ref *ref();
+
+    friend bool operator ==(const ErlRef &r1, const ErlRef &r2);
+
+private:
+    erlang_ref m_ref;
+};
 
 }
 
+Q_DECLARE_METATYPE(MailSlot::ErlRef)
 
-#endif // ERLVARTYPES_H
+#endif // ERLREF_H

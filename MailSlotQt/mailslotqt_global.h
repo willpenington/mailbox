@@ -1,0 +1,12 @@
+#ifndef MAILSLOTQT_GLOBAL_H
+#define MAILSLOTQT_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(MAILSLOTQT_LIBRARY)
+#  define MAILSLOTQTSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define MAILSLOTQTSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // MAILSLOTQT_GLOBAL_H

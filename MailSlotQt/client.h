@@ -9,7 +9,7 @@
 struct ei_cnode_s;
 typedef struct ei_cnode_s ei_cnode;
 
-namespace Mailbox {
+namespace MailSlot {
 
 class Client : public QObject
 {

@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -18,33 +18,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 USA
 */
 
-#include "erlpid.h"
+#ifndef ERLVARTYPES_H
+#define ERLVARTYPES_H
 
-namespace Mailbox {
+#include <QVariant>
 
-ErlPid::ErlPid()
-{
+namespace MailSlot {
+// A set of functions for generating Erlang types without importing ei
 
-}
+QVariant build_erl_pid(unsigned int creation, unsigned int num, unsigned int serial, QString node);
+QVariant build_erl_port(unsigned int id, unsigned int creation, QString node);
+QVariant build_erl_ref(int len, unsigned int a, unsigned int b, unsigned int c, unsigned int creation, QString node);
 
-ErlPid::ErlPid(erlang_pid pid) :
-    m_pid(pid)
-{
-
-}
-
-erlang_pid *ErlPid::pid()
-{
-    return &m_pid;
-}
-
-bool operator ==(const ErlPid &p1, const ErlPid &p2)
-{
-    return (p1.m_pid.creation == p2.m_pid.creation)
-        && (p1.m_pid.num == p2.m_pid.num)
-        && (p1.m_pid.serial == p2.m_pid.serial)
-        && (strcmp(p1.m_pid.node, p2.m_pid.node) == 0);
 
 }
 
-}
+
+#endif // ERLVARTYPES_H

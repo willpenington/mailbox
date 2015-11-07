@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ USA
 #include "erlref.h"
 #include "erlport.h"
 
-namespace Mailbox {
+namespace MailSlot {
 QVariant build_erl_pid(unsigned int creation, unsigned int num, unsigned int serial, QString node)
 {
     erlang_pid pid;

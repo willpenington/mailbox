@@ -18,12 +18,12 @@ TEMPLATE = app
 SOURCES += tst_erltypestest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MailboxQt/release/ -lMailboxQt
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MailboxQt/debug/ -lMailboxQt
-else:unix: LIBS += -L$$OUT_PWD/../MailboxQt/ -lMailboxQt
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MailSlotQt/release/ -lMailSlotQt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MailSlotQt/debug/ -lMailSlotQt
+else:unix: LIBS += -L$$OUT_PWD/../MailSlotQt/ -lMailSlotQt
 
-INCLUDEPATH += $$PWD/../MailboxQt
-DEPENDPATH += $$PWD/../MailboxQt
+INCLUDEPATH += $$PWD/../MailSlotQt
+DEPENDPATH += $$PWD/../MailSlotQt
 
 OTPPATH = /usr/lib/erlang
 

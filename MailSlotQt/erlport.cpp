@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -18,30 +18,32 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 USA
 */
 
-#ifndef ERLATOM_H
-#define ERLATOM_H
+#include "erlport.h"
 
-#include <QObject>
-#include <QString>
+namespace MailSlot {
 
-namespace Mailbox {
-
-class ErlAtom
+ErlPort::ErlPort()
 {
-public:
-    ErlAtom();
-    ErlAtom(QByteArray name);
-
-    QByteArray name();
-
-    friend bool operator ==(const ErlAtom &a1, const ErlAtom &a2);
-
-private:
-    QByteArray m_name;
-};
 
 }
 
-Q_DECLARE_METATYPE(Mailbox::ErlAtom)
+ErlPort::ErlPort(erlang_port port) :
+    m_port(port)
+{
 
-#endif // ERLATOM_H
+}
+
+erlang_port *ErlPort::port()
+{
+    return &m_port;
+}
+
+bool operator==(const ErlPort &p1, const ErlPort &p2)
+{
+    return (p1.m_port.creation == p2.m_port.creation)
+        && (p1.m_port.id == p2.m_port.id)
+        && (strcmp(p1.m_port.node, p2.m_port.node) == 0);
+}
+
+}
+

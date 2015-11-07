@@ -5,7 +5,7 @@
 #include <QThread>
 #include <QVariant>
 
-namespace Mailbox {
+namespace MailSlot {
 
 class MsgListener : public QThread
 {
@@ -24,6 +24,6 @@ private:
     int m_fd;
 };
 
-} // namespace Mailbox
+} // namespace MailSlot
 
 #endif // MSGLISTENER_H

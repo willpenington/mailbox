@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -18,32 +18,33 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 USA
 */
 
-#ifndef ERLREF_H
-#define ERLREF_H
+#include "erlpid.h"
 
-#include <QObject>
-#include "ei.h"
+namespace MailSlot {
 
-namespace Mailbox {
-
-class ErlRef
+ErlPid::ErlPid()
 {
-public:
-    ErlRef();
-    ErlRef(erlang_ref ref);
-
-    ~ErlRef();
-
-    erlang_ref *ref();
-
-    friend bool operator ==(const ErlRef &r1, const ErlRef &r2);
-
-private:
-    erlang_ref m_ref;
-};
 
 }
 
-Q_DECLARE_METATYPE(Mailbox::ErlRef)
+ErlPid::ErlPid(erlang_pid pid) :
+    m_pid(pid)
+{
 
-#endif // ERLREF_H
+}
+
+erlang_pid *ErlPid::pid()
+{
+    return &m_pid;
+}
+
+bool operator ==(const ErlPid &p1, const ErlPid &p2)
+{
+    return (p1.m_pid.creation == p2.m_pid.creation)
+        && (p1.m_pid.num == p2.m_pid.num)
+        && (p1.m_pid.serial == p2.m_pid.serial)
+        && (strcmp(p1.m_pid.node, p2.m_pid.node) == 0);
+
+}
+
+}

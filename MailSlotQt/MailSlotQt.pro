@@ -8,12 +8,12 @@ QT       -= gui
 
 CONFIG += c++11
 
-TARGET = MailboxQt
+TARGET = MailSlotQt
 TEMPLATE = lib
 
-DEFINES += MAILBOXQT_LIBRARY
+DEFINES += MAILSLOTQT_LIBRARY
 
-SOURCES += mailboxqt.cpp \
+SOURCES += mailslotqt.cpp \
     client.cpp \
     msglistener.cpp \
     erlconversion.cpp \
@@ -23,8 +23,8 @@ SOURCES += mailboxqt.cpp \
     erlatom.cpp \
     erlvartypes.cpp
 
-HEADERS += mailboxqt.h\
-        mailboxqt_global.h \
+HEADERS += mailslotqt.h\
+        mailslotqt_global.h \
     client.h \
     msglistener.h \
     erlconversion.h \

@@ -1,4 +1,4 @@
-#include "mailboxqt.h"
+#include "mailslotqt.h"
 
 #include "erl_interface.h"
 
@@ -7,7 +7,7 @@
 #include "erlport.h"
 #include "erlatom.h"
 
-namespace Mailbox {
+namespace MailSlot {
 
 unsigned int pidMetaType = 0;
 unsigned int refMetaType = 0;

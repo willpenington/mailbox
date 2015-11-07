@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -18,21 +18,32 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 USA
 */
 
-#ifndef ERLCONVERSION_H
-#define ERLCONVERSION_H
+#ifndef ERLPID_H
+#define ERLPID_H
 
+#include <QObject>
 #include "ei.h"
 
-#include <QVariant>
+namespace MailSlot {
 
-namespace Mailbox {
+class ErlPid
+{
+public:
+    ErlPid();
+    ErlPid(erlang_pid pid);
 
-QVariant decode(ei_x_buff *buff, bool *ok);
-bool encode(QVariant var, ei_x_buff *buff);
+    erlang_pid *pid();
 
+    friend bool operator ==(const ErlPid &p1, const ErlPid &p2);
 
-bool isErlangTerm(QVariant var);
+private:
+    erlang_pid m_pid;
+
+};
+
 
 }
 
-#endif // ERLCONVERSION_H
+Q_DECLARE_METATYPE(MailSlot::ErlPid)
+
+#endif // ERLPID_H

@@ -8,7 +8,7 @@
 
 #include <QDebug>
 
-namespace Mailbox {
+namespace MailSlot {
 
 short creation = 0;
 

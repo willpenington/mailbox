@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -18,30 +18,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 USA
 */
 
-#include "erlatom.h"
+#ifndef ERLANGSHELL_H
+#define ERLANGSHELL_H
 
-namespace Mailbox {
+#include <QByteArray>
+#include <QProcess>
 
-ErlAtom::ErlAtom() :
-    m_name("")
+#define ERL_COMMAND "/usr/bin/erl -sname "
+#define ERL_COOKIE_FLAG " -setcookie "
+
+class ErlangShell
 {
+public:
+    ErlangShell(QByteArray sname, QByteArray cookie);
+    ~ErlangShell();
 
-}
+    QByteArray execStatement(QByteArray statement);
 
-ErlAtom::ErlAtom(QByteArray name) :
-    m_name(name)
-{
+private:
+    QProcess proc;
 
-}
+};
 
-QByteArray ErlAtom::name()
-{
-    return m_name;
-}
-
-bool operator ==(const ErlAtom &a1, const ErlAtom &a2)
-{
-    return a1.m_name == a2.m_name;
-}
-
-}
+#endif // ERLANGSHELL_H

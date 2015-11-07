@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@ USA
 #include <QObject>
 #include "ei.h"
 
-namespace Mailbox {
+namespace MailSlot {
 
 class ErlPort
 {
@@ -43,6 +43,6 @@ private:
 
 }
 
-Q_DECLARE_METATYPE(Mailbox::ErlPort)
+Q_DECLARE_METATYPE(MailSlot::ErlPort)
 
 #endif // ERLPORT_H

@@ -1,11 +1,11 @@
-#ifndef MAILBOXQT_H
-#define MAILBOXQT_H
+#ifndef MAILSLOTQT_H
+#define MAILSLOTQT_H
 
-#include "mailboxqt_global.h"
+#include "mailslotqt_global.h"
 
 #include <QObject>
 
-namespace Mailbox {
+namespace MailSlot {
 
 void init();
 
@@ -16,6 +16,6 @@ extern unsigned int atomMetaType;
 
 QString formatErlangTerm(QVariant var);
 
-} // namespace Mailbox
+} // namespace MailSlot
 
-#endif // MAILBOXQT_H
+#endif // MAILSLOTQT_H

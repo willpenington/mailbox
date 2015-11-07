@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -18,32 +18,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 USA
 */
 
-#include "erlport.h"
+#ifndef ERLCONVERSION_H
+#define ERLCONVERSION_H
 
-namespace Mailbox {
+#include "ei.h"
 
-ErlPort::ErlPort()
-{
+#include <QVariant>
 
-}
+namespace MailSlot {
 
-ErlPort::ErlPort(erlang_port port) :
-    m_port(port)
-{
+QVariant decode(ei_x_buff *buff, bool *ok);
+bool encode(QVariant var, ei_x_buff *buff);
 
-}
 
-erlang_port *ErlPort::port()
-{
-    return &m_port;
-}
-
-bool operator==(const ErlPort &p1, const ErlPort &p2)
-{
-    return (p1.m_port.creation == p2.m_port.creation)
-        && (p1.m_port.id == p2.m_port.id)
-        && (strcmp(p1.m_port.node, p2.m_port.node) == 0);
-}
+bool isErlangTerm(QVariant var);
 
 }
 
+#endif // ERLCONVERSION_H

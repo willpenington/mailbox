@@ -1,5 +1,5 @@
 /*
-Mailbox
+MailSlot
 Copyright (C) 2015 Will Penington
 
 This library is free software; you can redistribute it and/or
@@ -29,15 +29,15 @@ USA
 #include "erlvartypes.h"
 
 
-#include "mailboxqt.h"
+#include "mailslotqt.h"
 #include "client.h"
 
-class MailboxTest : public QObject
+class MailSlotTest : public QObject
 {
     Q_OBJECT
 
 public:
-    MailboxTest();
+    MailSlotTest();
 
 private Q_SLOTS:
     void canCommunicateWithErlangShell_data();
@@ -67,15 +67,15 @@ QVariantMap simpleValues {
     {"float", 4.3},
     {"round_float", 4.0},
     {"large_int", 1000000},
-    {"atom", QVariant::fromValue(Mailbox::ErlAtom("testatom"))}
+    {"atom", QVariant::fromValue(MailSlot::ErlAtom("testatom"))}
 };
 
-MailboxTest::MailboxTest()
+MailSlotTest::MailSlotTest()
 {
-    Mailbox::init();
+    MailSlot::init();
 }
 
-void MailboxTest::canCommunicateWithErlangShell_data() {
+void MailSlotTest::canCommunicateWithErlangShell_data() {
   QTest::addColumn<QByteArray>("statement");
   QTest::addColumn<QByteArray>("expected");
 
@@ -85,7 +85,7 @@ void MailboxTest::canCommunicateWithErlangShell_data() {
                                  << QByteArray("[{foo,bar},4,baz]\n");
 }
 
-void MailboxTest::canCommunicateWithErlangShell()
+void MailSlotTest::canCommunicateWithErlangShell()
 {
   ErlangShell erl("dummy", "cookie");
 
@@ -93,7 +93,7 @@ void MailboxTest::canCommunicateWithErlangShell()
   QTEST(erl.execStatement(statement), "expected");
 }
 
-void MailboxTest::clientCanConnectToErlang_data()
+void MailSlotTest::clientCanConnectToErlang_data()
 {
   QTest::addColumn<QByteArray>("erlangNodeName");
   QTest::addColumn<QByteArray>("cnodeNodeName");
@@ -122,7 +122,7 @@ void MailboxTest::clientCanConnectToErlang_data()
                             << QByteArray("cookie") << false;
 }
 
-void MailboxTest::clientCanConnectToErlang()
+void MailSlotTest::clientCanConnectToErlang()
 {
   QFETCH(QByteArray, erlangNodeName);
   QFETCH(QByteArray, cnodeNodeName);
@@ -132,20 +132,20 @@ void MailboxTest::clientCanConnectToErlang()
 
   ErlangShell erl(erlangNodeName, erlangCookie);
 
-  Mailbox::Client *node = new Mailbox::Client();
+  MailSlot::Client *node = new MailSlot::Client();
 
   QTEST(node->connect(cnodeNodeName, cnodeConnectTo, cnodeCookie), "expected");
 
   delete(node);
 }
 
-void MailboxTest::canSendMessageToErlang_data()
+void MailSlotTest::canSendMessageToErlang_data()
 {
 //    QTest::addColumn<QVariant>("value");
 
 //    QTest::newRow("int") <<  QVariant(1);
 
-//    Mailbox::ErlAtom atom("testatom");
+//    MailSlot::ErlAtom atom("testatom");
 
 //    QTest::newRow("atom") << QVariant::fromValue(atom);
 
@@ -163,7 +163,7 @@ void MailboxTest::canSendMessageToErlang_data()
 
 QString erl_output(QVariant value)
 {
-    QString raw = Mailbox::formatErlangTerm(value);
+    QString raw = MailSlot::formatErlangTerm(value);
 
     QRegularExpression re;
     re.setPattern("(\\d+\\.\\d*?[1-9])0+");
@@ -184,12 +184,12 @@ QString erl_output(QVariant value)
     return raw;
 }
 
-void MailboxTest::canSendMessageToErlang()
+void MailSlotTest::canSendMessageToErlang()
 {
   QFETCH(QVariant, value);
 
   ErlangShell erl("sendmessage", "cookie");
-  Mailbox::Client *node = new Mailbox::Client();
+  MailSlot::Client *node = new MailSlot::Client();
   QVERIFY(node->connect("sendmessagelib", "sendmessage", "cookie"));
 
   erl.execStatement("register(shell, self()).");
@@ -206,7 +206,7 @@ void MailboxTest::canSendMessageToErlang()
   delete(node);
 }
 
-void MailboxTest::canRecieveMessagesFromErlang_data()
+void MailSlotTest::canRecieveMessagesFromErlang_data()
 {
     QTest::addColumn<QVariant>("value");
 
@@ -219,14 +219,14 @@ void MailboxTest::canRecieveMessagesFromErlang_data()
 
 }
 
-void MailboxTest::canRecieveMessagesFromErlang()
+void MailSlotTest::canRecieveMessagesFromErlang()
 {
 
     ErlangShell erl("recvmessage", "cookie");
-    Mailbox::Client *node = new Mailbox::Client();
+    MailSlot::Client *node = new MailSlot::Client();
     QVERIFY(node->connect("recvmessagelib", "recvmessage", "cookie"));
 
-    QSignalSpy recvSpy(node, &Mailbox::Client::messageRecieved);
+    QSignalSpy recvSpy(node, &MailSlot::Client::messageRecieved);
 
     erl.execStatement("register(shell, self()).");
     node->sendPid("shell");
@@ -234,7 +234,7 @@ void MailboxTest::canRecieveMessagesFromErlang()
     QCOMPARE(recvSpy.count(), 0);
 
     QFETCH(QVariant, value);
-    QByteArray val_str = Mailbox::formatErlangTerm(value).toUtf8();
+    QByteArray val_str = MailSlot::formatErlangTerm(value).toUtf8();
 
     QString stmt = "receive\n Pid -> Pid ! " + val_str + "\n end.";
 
@@ -246,10 +246,10 @@ void MailboxTest::canRecieveMessagesFromErlang()
     delete(node);
 }
 
-void MailboxTest::canSendMultipleMessagesToErlang()
+void MailSlotTest::canSendMultipleMessagesToErlang()
 {
   ErlangShell erl("sendmultimessage", "cookie");
-  Mailbox::Client *node = new Mailbox::Client();
+  MailSlot::Client *node = new MailSlot::Client();
   QVERIFY(node->connect("sendmultimessagelib", "sendmultimessage", "cookie"));
 
   erl.execStatement("register(shell, self()).");
@@ -277,14 +277,14 @@ void MailboxTest::canSendMultipleMessagesToErlang()
   delete(node);
 }
 
-void MailboxTest::canRecieveMultipleMessagesFromErlang()
+void MailSlotTest::canRecieveMultipleMessagesFromErlang()
 {
 
     ErlangShell erl("rmm", "cookie");
-    Mailbox::Client *node = new Mailbox::Client();
+    MailSlot::Client *node = new MailSlot::Client();
     QVERIFY(node->connect("rmml", "rmm", "cookie"));
 
-    QSignalSpy recvSpy(node, &Mailbox::Client::messageRecieved);
+    QSignalSpy recvSpy(node, &MailSlot::Client::messageRecieved);
 
     erl.execStatement("register(shell, self()).");
     node->sendPid("shell");
@@ -311,7 +311,7 @@ void MailboxTest::canRecieveMultipleMessagesFromErlang()
     delete(node);
 }
 
-void MailboxTest::canRoundTripFromCNode_data()
+void MailSlotTest::canRoundTripFromCNode_data()
 {
 
     QTest::addColumn<QVariant>("value");
@@ -324,15 +324,15 @@ void MailboxTest::canRoundTripFromCNode_data()
     }
 }
 
-void MailboxTest::canRoundTripFromCNode()
+void MailSlotTest::canRoundTripFromCNode()
 {
     QFETCH(QVariant, value);
 
     ErlangShell erl("roundtrip", "cookie");
-    Mailbox::Client *node = new Mailbox::Client();
+    MailSlot::Client *node = new MailSlot::Client();
     QVERIFY(node->connect("roundtriplib", "roundtrip", "cookie"));
 
-    QSignalSpy recvSpy(node, &Mailbox::Client::messageRecieved);
+    QSignalSpy recvSpy(node, &MailSlot::Client::messageRecieved);
 
     erl.execStatement("register(shell, self()).");
     node->sendPid("shell");
@@ -347,12 +347,12 @@ void MailboxTest::canRoundTripFromCNode()
     QCOMPARE(recvSpy.takeFirst()[0], value);
 }
 
-void MailboxTest::unusedNodeDoesNotCrash()
+void MailSlotTest::unusedNodeDoesNotCrash()
 {
-    Mailbox::Client *node = new Mailbox::Client();
+    MailSlot::Client *node = new MailSlot::Client();
     delete(node);
 }
 
-QTEST_GUILESS_MAIN(MailboxTest)
+QTEST_GUILESS_MAIN(MailSlotTest)
 
-#include "tst_mailboxtest.moc"
+#include "tst_mailslottest.moc"
