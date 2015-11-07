@@ -16,7 +16,7 @@ public:
     explicit MsgListener(int fd, QObject *parent = 0);
 
 signals:
-    void messageRecieved(QVariant value);
+    void messageRecieved(QVariant to, QVariant value);
 
 public slots:
 

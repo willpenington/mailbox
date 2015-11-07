@@ -25,12 +25,14 @@ public:
 
     void sendMessage(QByteArray procName, QVariant value);
 
+    QVariant self();
+
 signals:
 
-    void messageRecieved(QVariant value);
+    void messageRecieved(QVariant to, QVariant value);
 
 public slots:
-    void listenerMessage(QVariant value);
+    void listenerMessage(QVariant to, QVariant value);
 
 private:
 

@@ -229,7 +229,10 @@ void MailSlotTest::canRecieveMessagesFromErlang()
     QSignalSpy recvSpy(node, &MailSlot::Client::messageRecieved);
 
     erl.execStatement("register(shell, self()).");
-    node->sendPid("shell");
+
+    QVariant self = node->self();
+
+    node->sendMessage("shell", self);
 
     QCOMPARE(recvSpy.count(), 0);
 
@@ -241,7 +244,15 @@ void MailSlotTest::canRecieveMessagesFromErlang()
     erl.execStatement(stmt.toUtf8());
 
     QVERIFY(recvSpy.count() == 1 || recvSpy.wait(1000));
-    QCOMPARE(recvSpy.takeFirst()[0], value);
+
+    QVariant to = recvSpy.first()[0];
+    QVariant contents = recvSpy.first()[1];
+
+    // Check message destination
+    QCOMPARE(to, self);
+
+    // Check message contents
+    QCOMPARE(contents, value);
 
     delete(node);
 }
@@ -344,7 +355,7 @@ void MailSlotTest::canRoundTripFromCNode()
     erl.execStatement("receive\n Val -> Pid ! Val\n end.");
 
     QVERIFY(recvSpy.count() == 1 || recvSpy.wait(1000));
-    QCOMPARE(recvSpy.takeFirst()[0], value);
+    QCOMPARE(recvSpy.takeFirst()[1], value);
 }
 
 void MailSlotTest::unusedNodeDoesNotCrash()

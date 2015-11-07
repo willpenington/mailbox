@@ -4,6 +4,8 @@
 
 #include "erlconversion.h"
 
+#include "erlpid.h"
+
 namespace MailSlot {
 
 MsgListener::MsgListener(int fd, QObject *parent) :
@@ -34,8 +36,11 @@ void MsgListener::run()
             bool ok = true;
             QVariant var = decode(&buff, &ok);
 
-            if (ok)
-                emit messageRecieved(var);
+            if (ok) {
+                QVariant to = QVariant::fromValue(ErlPid(msg.to));
+
+                emit messageRecieved(to, var);
+            }
         }
 
         ei_x_free(&buff);

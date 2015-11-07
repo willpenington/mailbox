@@ -5,6 +5,7 @@
 #include "ei_connect.h"
 
 #include "erlconversion.h"
+#include "erlpid.h"
 
 #include <QDebug>
 
@@ -67,9 +68,14 @@ void Client::sendMessage(QByteArray procName, QVariant value)
     ei_x_free(&x);
 }
 
-void Client::listenerMessage(QVariant value)
+QVariant Client::self()
 {
-    emit messageRecieved(value);
+    return QVariant::fromValue(ErlPid(m_ec->self));
+}
+
+void Client::listenerMessage(QVariant to, QVariant value)
+{
+    emit messageRecieved(to, value);
 }
 
 bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
@@ -117,7 +123,7 @@ bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
     QObject::connect(m_listener, &MsgListener::finished, m_listener, &QObject::deleteLater);
 
     QObject::connect(m_listener, &MsgListener::messageRecieved,
-                     [=](QVariant value) { emit messageRecieved(value); });
+                     [=](QVariant to, QVariant value) { emit messageRecieved(to, value); });
 
     m_listener->start();
 

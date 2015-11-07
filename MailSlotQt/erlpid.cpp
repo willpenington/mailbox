@@ -20,6 +20,8 @@ USA
 
 #include "erlpid.h"
 
+#define LOWER(value, usedsize) ((value << (sizeof(value) - usedsize )) >> (sizeof(value) - usedsize))
+
 namespace MailSlot {
 
 ErlPid::ErlPid()
@@ -40,7 +42,19 @@ erlang_pid *ErlPid::pid()
 
 bool operator ==(const ErlPid &p1, const ErlPid &p2)
 {
-    return (p1.m_pid.creation == p2.m_pid.creation)
+    int creation1 = p1.m_pid.creation & 0x03;
+    int creation2 = p2.m_pid.creation & 0x03;
+    int serial1 = p1.m_pid.serial & 0x07;
+    int serial2 = p2.m_pid.serial & 0x07;
+    int number1 = p1.m_pid.num & 0x7FFF;
+    int number2 = p2.m_pid.num & 0x7FFF;
+
+    return (creation1 == creation2)
+        && (serial1 == serial2)
+        && (number1 == number2)
+        && (strcmp(p1.m_pid.node, p2.m_pid.node) == 0);
+
+    return (LOWER(p1.m_pid.creation,2) == LOWER(p2.m_pid.creation, 2))
         && (p1.m_pid.num == p2.m_pid.num)
         && (p1.m_pid.serial == p2.m_pid.serial)
         && (strcmp(p1.m_pid.node, p2.m_pid.node) == 0);
