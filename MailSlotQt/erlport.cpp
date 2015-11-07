@@ -40,8 +40,8 @@ erlang_port *ErlPort::port()
 
 bool operator==(const ErlPort &p1, const ErlPort &p2)
 {
-    return (p1.m_port.creation == p2.m_port.creation)
-        && (p1.m_port.id == p2.m_port.id)
+    return ((p1.m_port.creation & 0x3) == (p2.m_port.creation) & 0x3)
+        && ((p1.m_port.id & 0x3FFFF) == (p2.m_port.id) & 0x3FFFF)
         && (strcmp(p1.m_port.node, p2.m_port.node) == 0);
 }
 

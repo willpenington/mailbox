@@ -42,9 +42,11 @@ ErlRef::~ErlRef() {
 
 bool operator ==(const ErlRef &r1, const ErlRef &r2)
 {
-    return (r1.m_ref.creation == r2.m_ref.creation)
+    return ((r1.m_ref.creation & 0x3) == (r2.m_ref.creation) & 0x3)
         && (r1.m_ref.len == r2.m_ref.len)
-        && (memcmp(r1.m_ref.n, r2.m_ref.n, 3)== 0)
+        && (r1.m_ref.len < 1 || (r1.m_ref.n[0] == r2.m_ref.n[0]))
+        && (r1.m_ref.len < 2 || (r1.m_ref.n[1] == r2.m_ref.n[1]))
+        && (r1.m_ref.len < 3 || ((r1.m_ref.n[1] & 0x3FFFF) == (r2.m_ref.n[1] & 0x3FFFF)))
         && (strcmp(r1.m_ref.node, r2.m_ref.node) == 0);
 
 }
