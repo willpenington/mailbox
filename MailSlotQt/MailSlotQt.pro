@@ -21,7 +21,8 @@ SOURCES += mailslotqt.cpp \
     erlref.cpp \
     erlport.cpp \
     erlatom.cpp \
-    erlvartypes.cpp
+    erlvartypes.cpp \
+    process.cpp
 
 HEADERS += mailslotqt.h\
         mailslotqt_global.h \
@@ -32,7 +33,8 @@ HEADERS += mailslotqt.h\
     erlref.h \
     erlport.h \
     erlatom.h \
-    erlvartypes.h
+    erlvartypes.h \
+    process.h
 
 unix {
     target.path = /usr/lib

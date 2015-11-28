@@ -6,8 +6,10 @@
 
 #include "erlconversion.h"
 #include "erlpid.h"
+#include "process.h"
 
 #include <QDebug>
+
 
 namespace MailSlot {
 
@@ -128,6 +130,10 @@ bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
     m_listener->start();
 
     return true;
+}
+
+Process *Client::spawn() {
+    new Process(this);
 }
 
 }

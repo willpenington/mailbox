@@ -40,3 +40,5 @@ else:unix|win32-g++: PRE_TARGETDEPS += $$OTPPATH/usr/lib/liberl_interface.a
 win32:!win32-g++: PRE_TARGETDEPS += $$OTPPATH/usr/lib/ei.lib
 else:unix|win32-g++: PRE_TARGETDEPS += $$OTPPATH/usr/lib/libei.a
 
+HEADERS +=
+

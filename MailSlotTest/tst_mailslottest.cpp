@@ -31,6 +31,7 @@ USA
 
 #include "mailslotqt.h"
 #include "client.h"
+#include "process.h"
 
 class MailSlotTest : public QObject
 {
@@ -224,13 +225,17 @@ void MailSlotTest::canRecieveMessagesFromErlang()
 
     ErlangShell erl("recvmessage", "cookie");
     MailSlot::Client *node = new MailSlot::Client();
+
     QVERIFY(node->connect("recvmessagelib", "recvmessage", "cookie"));
 
-    QSignalSpy recvSpy(node, &MailSlot::Client::messageRecieved);
+    // Start a prcoess
+    MailSlot::Process *proc = node->spawn();
+
+    QSignalSpy recvSpy(proc, &MailSlot::Process::messageRecieved);
 
     erl.execStatement("register(shell, self()).");
 
-    QVariant self = node->self();
+    QVariant self = proc->pid();
 
     node->sendMessage("shell", self);
 
@@ -254,6 +259,7 @@ void MailSlotTest::canRecieveMessagesFromErlang()
     // Check message contents
     QCOMPARE(contents, value);
 
+    delete(proc);
     delete(node);
 }
 
@@ -295,10 +301,13 @@ void MailSlotTest::canRecieveMultipleMessagesFromErlang()
     MailSlot::Client *node = new MailSlot::Client();
     QVERIFY(node->connect("rmml", "rmm", "cookie"));
 
-    QSignalSpy recvSpy(node, &MailSlot::Client::messageRecieved);
+    // Start a prcoess
+    MailSlot::Process *proc = node->spawn();
+
+    QSignalSpy recvSpy(proc, &MailSlot::Process::messageRecieved);
 
     erl.execStatement("register(shell, self()).");
-    node->sendPid("shell");
+    node->sendMessage("shell", proc->pid());
 
     QCOMPARE(recvSpy.count(), 0);
 

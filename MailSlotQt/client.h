@@ -11,6 +11,8 @@ typedef struct ei_cnode_s ei_cnode;
 
 namespace MailSlot {
 
+class Process;
+
 class Client : public QObject
 {
     Q_OBJECT
@@ -26,6 +28,8 @@ public:
     void sendMessage(QByteArray procName, QVariant value);
 
     QVariant self();
+
+    Process *spawn();
 
 signals:
 
