@@ -37,7 +37,7 @@ void MsgListener::run()
             QVariant var = decode(&buff, &ok);
 
             if (ok) {
-                QVariant to = QVariant::fromValue(ErlPid(msg.to));
+                QVariant to = QVariant::fromValue(ErlPid((void *) &(msg.to)));
 
                 emit messageRecieved(to, var);
             }

@@ -293,14 +293,14 @@ QVariant decodePid(ei_x_buff *buff, bool *ok)
         return QVariant();
     }
 
-    return QVariant::fromValue(ErlPid(val));
+    return QVariant::fromValue(ErlPid(&val));
 }
 
 bool encodePid(QVariant var, ei_x_buff *buff)
 {
     ErlPid val = qvariant_cast<ErlPid>(var);
 
-    erlang_pid pid = *(val.pid());
+    erlang_pid pid =  *((erlang_pid *) val.raw_pid());
 
     bool encode_ok;
     encode_ok = ei_x_encode_pid(buff, &pid) == 0;

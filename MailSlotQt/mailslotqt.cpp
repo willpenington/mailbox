@@ -17,6 +17,8 @@ unsigned int atomMetaType = 0;
 void init() {
   erl_init(NULL, 0);
 
+//  registerPidType();
+
   pidMetaType = qRegisterMetaType<ErlPid>();
   QMetaType::registerEqualsComparator<ErlPid>();
 

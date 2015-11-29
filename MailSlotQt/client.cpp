@@ -72,7 +72,7 @@ void Client::sendMessage(QByteArray procName, QVariant value)
 
 QVariant Client::self()
 {
-    return QVariant::fromValue(ErlPid(m_ec->self));
+    return QVariant::fromValue(ErlPid((void *) &(m_ec->self)));
 }
 
 void Client::listenerMessage(QVariant to, QVariant value)
@@ -143,7 +143,7 @@ Process *Client::spawn() {
 
     pid.num = num_counter;
 
-    QVariant var = QVariant::fromValue(ErlPid(pid));
+    QVariant var = QVariant::fromValue(ErlPid((void *) &pid));
 
     return new Process(this, var);
 }

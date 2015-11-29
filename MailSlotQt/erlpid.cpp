@@ -20,45 +20,80 @@ USA
 
 #include "erlpid.h"
 
+#include <ei.h>
+
+#include <QSharedData>
+
 #define LOWER(value, usedsize) ((value << (sizeof(value) - usedsize )) >> (sizeof(value) - usedsize))
 
 namespace MailSlot {
 
+class PidData : public QSharedData {
+public:
+    PidData() { }
+    PidData(const PidData &other)
+        : QSharedData(other), pid(other.pid) { }
+    ~PidData() { }
+
+    erlang_pid pid;
+};
+
 ErlPid::ErlPid()
 {
-
+    d = new PidData;
 }
 
-ErlPid::ErlPid(erlang_pid pid) :
-    m_pid(pid)
+ErlPid::ErlPid(const ErlPid &other) :
+    d(other.d)
 {
 
 }
 
-erlang_pid *ErlPid::pid()
+ErlPid::ErlPid(void *raw_pid)
 {
-    return &m_pid;
+    d = new PidData;
+    d->pid = *((erlang_pid *) raw_pid);
 }
 
-bool operator ==(const ErlPid &p1, const ErlPid &p2)
+ErlPid &ErlPid::operator =(const ErlPid &rhs) {
+    if (this == &rhs) return *this;
+    d = rhs.d;
+    return *this;
+}
+
+ErlPid::~ErlPid() {
+
+}
+
+void *ErlPid::raw_pid()
 {
-    int creation1 = p1.m_pid.creation & 0x03;
-    int creation2 = p2.m_pid.creation & 0x03;
-    int serial1 = p1.m_pid.serial & 0x07;
-    int serial2 = p2.m_pid.serial & 0x07;
-    int number1 = p1.m_pid.num & 0x7FFF;
-    int number2 = p2.m_pid.num & 0x7FFF;
+    return  &(d->pid);
+}
+
+
+
+bool ErlPid::operator ==(const ErlPid &other) const
+{
+
+    int creation1 = d->pid.creation & 0x03;
+    int creation2 = other.d->pid.creation & 0x03;
+    int serial1 = d->pid.serial & 0x07;
+    int serial2 = other.d->pid.serial & 0x07;
+    int number1 = d->pid.num & 0x7FFF;
+    int number2 = other.d->pid.num & 0x7FFF;
 
     return (creation1 == creation2)
         && (serial1 == serial2)
         && (number1 == number2)
-        && (strcmp(p1.m_pid.node, p2.m_pid.node) == 0);
-
-    return (LOWER(p1.m_pid.creation,2) == LOWER(p2.m_pid.creation, 2))
-        && (p1.m_pid.num == p2.m_pid.num)
-        && (p1.m_pid.serial == p2.m_pid.serial)
-        && (strcmp(p1.m_pid.node, p2.m_pid.node) == 0);
+        && (strcmp(d->pid.node, other.d->pid.node) == 0);
 
 }
 
+
+}
+
+
+void MailSlot::registerPidType() {
+//  pidMetaType = qRegisterMetaType<ErlPid>();
+//  QMetaType::registerEqualsComparator<ErlPid>();
 }

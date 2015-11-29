@@ -22,25 +22,35 @@ USA
 #define ERLPID_H
 
 #include <QObject>
-#include "ei.h"
+#include <QSharedDataPointer>
 
 namespace MailSlot {
+
+class PidData;
 
 class ErlPid
 {
 public:
     ErlPid();
-    ErlPid(erlang_pid pid);
+    ErlPid(void *raw_pid);
+    ErlPid(const ErlPid &other);
+    ~ErlPid();
 
-    erlang_pid *pid();
+    ErlPid &operator=(const ErlPid &rhs);
+    bool operator==(const ErlPid &other) const;
+    inline bool operator !=(const ErlPid &other) const { return !operator==(other); }
 
-    friend bool operator ==(const ErlPid &p1, const ErlPid &p2);
+    void *raw_pid();
+
+//    friend bool operator ==(const ErlPid &p1, const ErlPid &p2);
 
 private:
-    erlang_pid m_pid;
+    QSharedDataPointer<PidData> d;
+//    erlang_pid m_pid;
 
 };
 
+void registerPidType();
 
 }
 

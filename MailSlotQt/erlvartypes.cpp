@@ -37,7 +37,7 @@ QVariant build_erl_pid(unsigned int creation, unsigned int num, unsigned int ser
 
     strncpy(pid.node, node.toUtf8().data(), MAXATOMLEN_UTF8);
 
-    return QVariant::fromValue(ErlPid(pid));
+    return QVariant::fromValue(ErlPid(&pid));
 }
 
 QVariant build_erl_port(unsigned int id, unsigned int creation, QString node)
