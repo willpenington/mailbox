@@ -12,7 +12,7 @@ class Process : public QObject
 {
     Q_OBJECT
 public:
-    explicit Process(Client *client);
+    explicit Process(Client *client, QVariant pid);
 
     QVariant pid();
 

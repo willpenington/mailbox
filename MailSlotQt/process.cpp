@@ -4,7 +4,7 @@
 
 namespace MailSlot {
 
-Process::Process(Client *client) :
+Process::Process(Client *client, QVariant) :
     m_client(client),
     QObject(client)
 {
@@ -13,7 +13,7 @@ Process::Process(Client *client) :
 }
 
 QVariant Process::pid() {
-    m_client->self();
+    return m_client->self();
 }
 
 }

@@ -133,7 +133,7 @@ bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
 }
 
 Process *Client::spawn() {
-    new Process(this);
+    return new Process(this, this->self());
 }
 
 }

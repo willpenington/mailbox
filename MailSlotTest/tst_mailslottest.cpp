@@ -47,6 +47,8 @@ private Q_SLOTS:
     void clientCanConnectToErlang_data();
     void clientCanConnectToErlang();
 
+    void processesHaveDifferentPids();
+
     void canSendMessageToErlang_data();
     void canSendMessageToErlang();
 
@@ -207,6 +209,20 @@ void MailSlotTest::canSendMessageToErlang()
   delete(node);
 }
 
+void MailSlotTest::processesHaveDifferentPids()
+{
+    ErlangShell erl("procsdiff", "cookie");
+    MailSlot::Client *node = new MailSlot::Client();
+    QVERIFY(node->connect("procsdifflib", "procsdiff", "cookie"));
+
+    MailSlot::Process *proc1 = node->spawn();
+    MailSlot::Process *proc2 = node->spawn();
+
+    QVERIFY(proc1 != proc2);
+    QVERIFY(proc1->pid() != proc2->pid());
+
+}
+
 void MailSlotTest::canRecieveMessagesFromErlang_data()
 {
     QTest::addColumn<QVariant>("value");
@@ -236,6 +252,8 @@ void MailSlotTest::canRecieveMessagesFromErlang()
     erl.execStatement("register(shell, self()).");
 
     QVariant self = proc->pid();
+
+    qDebug() << self;
 
     node->sendMessage("shell", self);
 
