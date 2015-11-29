@@ -58,6 +58,8 @@ private Q_SLOTS:
     void canSendMultipleMessagesToErlang();
     void canRecieveMultipleMessagesFromErlang();
 
+    void messagesGoToCorrectProcess();
+
     void canRoundTripFromCNode_data();
     void canRoundTripFromCNode();
 
@@ -310,6 +312,58 @@ void MailSlotTest::canSendMultipleMessagesToErlang()
   QCOMPARE(erl.execStatement("flush()."), QByteArray("Shell got test3\n"));
 
   delete(node);
+}
+
+void MailSlotTest::messagesGoToCorrectProcess() {
+
+    ErlangShell erl("routemessage", "cookie");
+    MailSlot::Client *node = new MailSlot::Client();
+
+    QVERIFY(node->connect("routemessagelib", "routemessage", "cookie"));
+
+    // Start a prcoess
+    MailSlot::Process *proc1 = node->spawn();
+    MailSlot::Process *proc2 = node->spawn();
+
+    QSignalSpy recvSpy1(proc1, &MailSlot::Process::messageRecieved);
+    QSignalSpy recvSpy2(proc2, &MailSlot::Process::messageRecieved);
+
+    erl.execStatement("register(shell, self()).");
+
+    node->sendMessage("shell", proc1->pid());
+
+    erl.execStatement("Pid1 = receive\n  Pid -> Pid\n end.");
+    erl.execStatement("flush().");
+
+    node->sendMessage("shell", proc2->pid());
+    erl.execStatement("Foo = receive\n  Bar -> Bar\n end.");
+
+//    node->sendMessage("shell", proc2->pid());
+//    erl.execStatement("Pid1 = Pid2.");
+
+    QCOMPARE(recvSpy1.count(), 0);
+    QCOMPARE(recvSpy2.count(), 0);
+
+    erl.execStatement("Pid1 ! hello.");
+
+    QVERIFY(recvSpy1.count() == 1 || recvSpy1.wait(1000));
+    QCOMPARE(recvSpy2.count(), 0);
+
+    // Check message contents
+//    QVariant contents_1 = recvSpy1.first()[1];
+//    QCOMPARE(contents_1, QVariant("hello"));
+
+    erl.execStatement("Foo ! greetings.");
+
+    QCOMPARE(recvSpy1.count(), 1);
+    QVERIFY(recvSpy2.count() == 1 || recvSpy2.wait(1000));
+
+//    QVariant contents_2 = recvSpy1.first()[1];
+//    QCOMPARE(contents_2, QVariant("greetings"));
+
+    delete(proc1);
+    delete(proc2);
+    delete(node);
 }
 
 void MailSlotTest::canRecieveMultipleMessagesFromErlang()

@@ -133,7 +133,19 @@ bool Client::connect(QByteArray name, QByteArray otherNode, QByteArray cookie)
 }
 
 Process *Client::spawn() {
-    return new Process(this, this->self());
+
+    static unsigned int num_counter = m_ec->self.num;
+    static unsigned int serial_counter = m_ec->self.serial;
+
+    erlang_pid pid = m_ec->self;
+
+    num_counter++;
+
+    pid.num = num_counter;
+
+    QVariant var = QVariant::fromValue(ErlPid(pid));
+
+    return new Process(this, var);
 }
 
 }

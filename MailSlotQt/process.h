@@ -16,6 +16,8 @@ public:
 
     QVariant pid();
 
+//    void processMessage(QVariant procName, QVariant value);
+
 signals:
     void messageRecieved(QVariant procName, QVariant value);
 
@@ -23,6 +25,7 @@ public slots:
 
 private:
     Client *m_client;
+    QVariant m_pid;
 };
 
 }
