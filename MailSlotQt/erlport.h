@@ -22,22 +22,29 @@ USA
 #define ERLPORT_H
 
 #include <QObject>
-#include "ei.h"
+#include <QSharedDataPointer>
 
 namespace MailSlot {
+
+class PortData;
 
 class ErlPort
 {
 public:
     ErlPort();
-    ErlPort(erlang_port port);
+    ErlPort(void *raw_port);
+    ErlPort(const ErlPort &other);
+    ~ErlPort();
 
-    erlang_port *port();
+    ErlPort &operator=(const ErlPort &rhs);
+    bool operator==(const ErlPort &other) const;
+    inline bool operator !=(const ErlPort &other) const { return !operator==(other); }
 
-    friend bool operator ==(const ErlPort &p1, const ErlPort &p2);
+    void *raw_port();
+
 
 private:
-    erlang_port m_port;
+    QSharedDataPointer<PortData> d;
 
 };
 

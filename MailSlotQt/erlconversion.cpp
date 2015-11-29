@@ -341,14 +341,14 @@ QVariant decodePort(ei_x_buff *buff, bool *ok)
         return QVariant();
     }
 
-    return QVariant::fromValue(ErlPort(val));
+    return QVariant::fromValue(ErlPort(&val));
 }
 
 bool encodePort(QVariant var, ei_x_buff *buff)
 {
     ErlPort port = qvariant_cast<ErlPort>(var);
 
-    return ei_x_encode_port(buff, port.port()) == 0;
+    return ei_x_encode_port(buff, (erlang_port *) port.raw_port()) == 0;
 }
 
 QVariant decodeAtom(ei_x_buff *buff, bool *ok)

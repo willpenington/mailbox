@@ -20,29 +20,59 @@ USA
 
 #include "erlport.h"
 
+#include <ei.h>
+
+#include <QSharedData>
+
 namespace MailSlot {
+
+class PortData : public QSharedData {
+public:
+    PortData() { }
+    PortData(const PortData &other)
+        : QSharedData(other), port(other.port) { }
+    ~PortData() { }
+
+    erlang_port port;
+};
 
 ErlPort::ErlPort()
 {
-
+    d = new PortData;
 }
 
-ErlPort::ErlPort(erlang_port port) :
-    m_port(port)
+ErlPort::ErlPort(const ErlPort &other) :
+    d(other.d)
 {
 
 }
 
-erlang_port *ErlPort::port()
+ErlPort::ErlPort(void *raw_port)
 {
-    return &m_port;
+    d = new PortData;
+    d->port = *((erlang_port *) raw_port);
 }
 
-bool operator==(const ErlPort &p1, const ErlPort &p2)
+ErlPort &ErlPort::operator=(const ErlPort &rhs) {
+    if (this == &rhs) return *this;
+    d = rhs.d;
+    return *this;
+}
+
+ErlPort::~ErlPort() {
+
+}
+
+void *ErlPort::raw_port()
 {
-    return ((p1.m_port.creation & 0x3) == (p2.m_port.creation) & 0x3)
-        && ((p1.m_port.id & 0x3FFFF) == (p2.m_port.id) & 0x3FFFF)
-        && (strcmp(p1.m_port.node, p2.m_port.node) == 0);
+    return &(d->port);
+}
+
+bool ErlPort::operator==(const ErlPort &other) const
+{
+    return ((d->port.creation & 0x3) == (other.d->port.creation) & 0x3)
+        && ((d->port.id & 0x3FFFF) == (other.d->port.id) & 0x3FFFF)
+        && (strcmp(d->port.node, other.d->port.node) == 0);
 }
 
 }

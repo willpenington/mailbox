@@ -48,7 +48,7 @@ QVariant build_erl_port(unsigned int id, unsigned int creation, QString node)
     port.creation = creation;
     strncpy(port.node, node.toUtf8().data(), MAXATOMLEN_UTF8);
 
-    return QVariant::fromValue(ErlPort(port));
+    return QVariant::fromValue(ErlPort(&port));
 }
 
 QVariant build_erl_ref(int len, unsigned int a, unsigned int b, unsigned int c, unsigned int creation, QString node)
