@@ -317,14 +317,14 @@ QVariant decodeRef(ei_x_buff *buff, bool *ok)
         return QVariant();
     }
 
-    return QVariant::fromValue(ErlRef(val));
+    return QVariant::fromValue(ErlRef(&val));
 }
 
 bool encodeRef(QVariant var, ei_x_buff *buff)
 {
     ErlRef val = qvariant_cast<ErlRef>(var);
 
-    erlang_ref ref = *(val.ref());
+    erlang_ref ref = *((erlang_ref *) val.raw_ref());
 
     bool encode_ok;
     encode_ok = ei_x_encode_ref(buff, &ref) == 0;

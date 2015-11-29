@@ -61,6 +61,6 @@ QVariant build_erl_ref(int len, unsigned int a, unsigned int b, unsigned int c, 
     ref.creation = creation;
 
     strncpy(ref.node, node.toUtf8().data(), MAXATOMLEN_UTF8);
-    return QVariant::fromValue(ErlRef(ref));
+    return QVariant::fromValue(ErlRef(&ref));
 }
 }

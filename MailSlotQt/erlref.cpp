@@ -20,34 +20,62 @@ USA
 
 #include "erlref.h"
 
+#include <ei.h>
+
+#include <QSharedData>
+
 namespace MailSlot {
+
+class RefData : public QSharedData {
+public:
+    RefData() { }
+    RefData(const RefData &other)
+        : QSharedData(other), erl_ref(other.erl_ref) { }
+    ~RefData() { }
+
+    erlang_ref erl_ref;
+};
 
 ErlRef::ErlRef()
 {
+    d = new RefData;
+}
+
+ErlRef::ErlRef(const ErlRef &other) :
+    d(other.d)
+{
 
 }
 
-ErlRef::ErlRef(erlang_ref ref) :
-    m_ref(ref)
+ErlRef::ErlRef(void *raw_ref)
 {
+    d = new RefData;
+    d->erl_ref = *((erlang_ref *) raw_ref);
 }
 
-erlang_ref *ErlRef::ref()
-{
-    return &m_ref;
+ErlRef &ErlRef::operator=(const ErlRef &rhs) {
+    if (this == &rhs) return *this;
+    d = rhs.d;
+    return *this;
 }
 
 ErlRef::~ErlRef() {
+
 }
 
-bool operator ==(const ErlRef &r1, const ErlRef &r2)
+void *ErlRef::raw_ref()
 {
-    return ((r1.m_ref.creation & 0x3) == (r2.m_ref.creation) & 0x3)
-        && (r1.m_ref.len == r2.m_ref.len)
-        && (r1.m_ref.len < 1 || (r1.m_ref.n[0] == r2.m_ref.n[0]))
-        && (r1.m_ref.len < 2 || (r1.m_ref.n[1] == r2.m_ref.n[1]))
-        && (r1.m_ref.len < 3 || ((r1.m_ref.n[1] & 0x3FFFF) == (r2.m_ref.n[1] & 0x3FFFF)))
-        && (strcmp(r1.m_ref.node, r2.m_ref.node) == 0);
+    return &(d->erl_ref);
+}
+
+bool ErlRef::operator ==(const ErlRef &other) const
+{
+    return ((d->erl_ref.creation & 0x3) == (other.d->erl_ref.creation) & 0x3)
+        && (d->erl_ref.len == other.d->erl_ref.len)
+        && (d->erl_ref.len < 1 || (d->erl_ref.n[0] == other.d->erl_ref.n[0]))
+        && (d->erl_ref.len < 2 || (d->erl_ref.n[1] == other.d->erl_ref.n[1]))
+        && (d->erl_ref.len < 3 || ((d->erl_ref.n[1] & 0x3FFFF) == (other.d->erl_ref.n[1] & 0x3FFFF)))
+        && (strcmp(d->erl_ref.node, other.d->erl_ref.node) == 0);
 
 }
 

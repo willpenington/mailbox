@@ -22,24 +22,29 @@ USA
 #define ERLREF_H
 
 #include <QObject>
-#include "ei.h"
+#include <QSharedDataPointer>
 
 namespace MailSlot {
+
+class RefData;
 
 class ErlRef
 {
 public:
     ErlRef();
-    ErlRef(erlang_ref ref);
+    ErlRef(void *raw_ref);
+    ErlRef(const ErlRef &other);
 
     ~ErlRef();
 
-    erlang_ref *ref();
+    ErlRef &operator=(const ErlRef &rhs);
+    bool operator==(const ErlRef &other) const;
+    inline bool operator !=(const ErlRef &other) const { return !operator==(other); }
 
-    friend bool operator ==(const ErlRef &r1, const ErlRef &r2);
+    void *raw_ref();
 
 private:
-    erlang_ref m_ref;
+    QSharedDataPointer<RefData> d;
 };
 
 }
