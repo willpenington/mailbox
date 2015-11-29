@@ -34,6 +34,8 @@ public:
     ErlPort();
     ErlPort(void *raw_port);
     ErlPort(const ErlPort &other);
+    ErlPort(unsigned int id, unsigned int creation, QString node);
+
     ~ErlPort();
 
     ErlPort &operator=(const ErlPort &rhs);

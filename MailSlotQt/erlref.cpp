@@ -53,6 +53,20 @@ ErlRef::ErlRef(void *raw_ref)
     d->erl_ref = *((erlang_ref *) raw_ref);
 }
 
+ErlRef::ErlRef(int len, unsigned int a, unsigned int b, unsigned int c,
+               unsigned int creation, QString node)
+{
+    d = new RefData;
+
+    d->erl_ref.len = len;
+    d->erl_ref.n[0] = a;
+    d->erl_ref.n[1] = b;
+    d->erl_ref.n[2] = c;
+    d->erl_ref.creation = creation;
+
+    strncpy(d->erl_ref.node, node.toUtf8().data(), MAXATOMLEN_UTF8);
+}
+
 ErlRef &ErlRef::operator=(const ErlRef &rhs) {
     if (this == &rhs) return *this;
     d = rhs.d;

@@ -34,6 +34,9 @@ public:
     ErlPid();
     ErlPid(void *raw_pid);
     ErlPid(const ErlPid &other);
+
+    ErlPid(unsigned int creation, unsigned int num, unsigned int serial, QString node);
+
     ~ErlPid();
 
     ErlPid &operator=(const ErlPid &rhs);

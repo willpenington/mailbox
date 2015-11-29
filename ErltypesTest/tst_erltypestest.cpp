@@ -27,11 +27,12 @@ USA
 #include "erlconversion.h"
 
 #include "erlatom.h"
+#include "erlpid.h"
+#include "erlport.h"
+#include "erlref.h"
 
 #include "ei.h"
 #include "erl_interface.h"
-
-#include "erlvartypes.h"
 
 class ErltypesTest : public QObject
 {
@@ -125,13 +126,14 @@ void ErltypesTest::conversionToAndFromBuffer_data()
     QTest::newRow("float") << QVariant((float) 7.3) << QVariant((float) 7.3) << true;
     QTest::newRow("double") << QVariant((double) 7.3) << QVariant((double) 7.3) << true;
 
-    QVariant pid = MailSlot::build_erl_pid(1, 2, 3, "testnode");
+//    QVariant pid = MailSlot::build_erl_pid(1, 2, 3, "testnode");
+    QVariant pid = QVariant::fromValue(MailSlot::ErlPid(1, 2, 3, "testnode"));
     QTest::newRow("pid") << pid << pid << true;
 
-    QVariant ref = MailSlot::build_erl_ref(3, 1, 2, 3, 1, "testnode");
+    QVariant ref = QVariant::fromValue(MailSlot::ErlRef(3, 1, 2, 3, 1, "testnode"));
     QTest::newRow("ref") << ref << ref << true;
 
-    QVariant port = MailSlot::build_erl_port(1, 2, "testnode");
+    QVariant port = QVariant::fromValue(MailSlot::ErlPort(1, 2, "testnode"));
     QTest::newRow("port") << port << port << true;
 
     QTest::newRow("atom") << QVariant::fromValue(MailSlot::ErlAtom("atomname")) << QVariant::fromValue(MailSlot::ErlAtom("atomname")) << true;
@@ -183,15 +185,15 @@ void ErltypesTest::printErlangTerm_data()
 
     QTest::newRow("atom") << QVariant::fromValue(MailSlot::ErlAtom("asdf")) << "asdf";
 
-    QVariant pid = MailSlot::build_erl_pid(1, 2, 3, "testnode");
+    QVariant pid = QVariant::fromValue(MailSlot::ErlPid(1, 2, 3, "testnode"));
 
     QTest::newRow("pid") << pid << "<testnode.2.3>";
 
-    QVariant ref = MailSlot::build_erl_ref(3, 1, 2, 3, 1, "testnode");
+    QVariant ref = QVariant::fromValue(MailSlot::ErlRef(3, 1, 2, 3, 1, "testnode"));
 
     QTest::newRow("ref") << ref << "#Ref<1.2.3>";
 
-    QVariant port = MailSlot::build_erl_port(1, 2, "testnode");
+    QVariant port = QVariant::fromValue(MailSlot::ErlPort(1, 2, "testnode"));
 
     QTest::newRow("port") << port << "#Port<1.2>";
 }

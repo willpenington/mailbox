@@ -55,6 +55,17 @@ ErlPid::ErlPid(void *raw_pid)
     d->pid = *((erlang_pid *) raw_pid);
 }
 
+ErlPid::ErlPid(unsigned int creation, unsigned int num, unsigned int serial, QString node)
+{
+    d = new PidData;
+
+    d->pid.creation = creation;
+    d->pid.num = num;
+    d->pid.serial = serial;
+
+    strncpy(d->pid.node, node.toUtf8().data(), MAXATOMLEN_UTF8);
+}
+
 ErlPid &ErlPid::operator =(const ErlPid &rhs) {
     if (this == &rhs) return *this;
     d = rhs.d;

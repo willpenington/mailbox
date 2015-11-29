@@ -26,7 +26,6 @@ USA
 #include "erlangshell.h"
 
 #include "erlatom.h"
-#include "erlvartypes.h"
 
 
 #include "mailslotqt.h"

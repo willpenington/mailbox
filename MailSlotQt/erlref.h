@@ -34,6 +34,8 @@ public:
     ErlRef();
     ErlRef(void *raw_ref);
     ErlRef(const ErlRef &other);
+    ErlRef(int len, unsigned int a, unsigned int b, unsigned int c,
+           unsigned int creation, QString node);
 
     ~ErlRef();
 

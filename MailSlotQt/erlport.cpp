@@ -53,6 +53,14 @@ ErlPort::ErlPort(void *raw_port)
     d->port = *((erlang_port *) raw_port);
 }
 
+ErlPort::ErlPort(unsigned int id, unsigned int creation, QString node)
+{
+    d = new PortData;
+    d->port.id = id;
+    d->port.creation = creation;
+    strncpy(d->port.node, node.toUtf8().data(), MAXATOMLEN_UTF8);
+}
+
 ErlPort &ErlPort::operator=(const ErlPort &rhs) {
     if (this == &rhs) return *this;
     d = rhs.d;
@@ -70,8 +78,8 @@ void *ErlPort::raw_port()
 
 bool ErlPort::operator==(const ErlPort &other) const
 {
-    return ((d->port.creation & 0x3) == (other.d->port.creation) & 0x3)
-        && ((d->port.id & 0x3FFFF) == (other.d->port.id) & 0x3FFFF)
+    return ((((d->port.creation) & 0x3) == (other.d->port.creation) & 0x3))
+        && (((d->port.id & 0x3FFFF) == (other.d->port.id) & 0x3FFFF))
         && (strcmp(d->port.node, other.d->port.node) == 0);
 }
 
